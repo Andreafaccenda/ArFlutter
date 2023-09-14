@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "280149087131",
+    "firebase_url": "https://serene-circlet-394113-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "serene-circlet-394113",
+    "storage_bucket": "serene-circlet-394113.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:280149087131:android:a971ae2c987075fa6cc73e",
+        "android_client_info": {
+          "package_name": "com.example.ar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "280149087131-jdfh9hm3rrpr1b9rnv2s7doa4htc3kqm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ar",
+            "certificate_hash": "309e18468cb80881ebee2ae7835479afe7b40c22"
+          }
+        },
+        {
+          "client_id": "280149087131-pk0me4s83abga3h61bll56cm0keb8frg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1PT5JjEIZZMHqi80QbV3SIxoYRAFlQtg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "280149087131-pk0me4s83abga3h61bll56cm0keb8frg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
