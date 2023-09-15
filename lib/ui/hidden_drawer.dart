@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:ar/screens/add_ammonite_to_firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:hidden_drawer_menu/hidden_drawer_menu.dart';
 import '../model/user_model.dart';
@@ -80,6 +81,15 @@ class _HiddenDrawerState extends State<HiddenDrawer> {
           colorLineSelected: Colors.black54,
         ),
         const FossilHome(),
+      ),
+      ScreenHiddenDrawer(
+        ItemHiddenMenu(
+          name: 'FIREBASE',
+          baseStyle: defaultTextStyle,
+          selectedStyle: defaultTextStyle,
+          colorLineSelected: Colors.black54,
+        ),
+        const AmmoniteFirebase(),
       ),
     ];
   }

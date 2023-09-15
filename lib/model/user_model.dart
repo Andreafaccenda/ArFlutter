@@ -1,4 +1,3 @@
-import 'fossil.dart';
 
 class UserModel {
   String? userId, nome, email, password;

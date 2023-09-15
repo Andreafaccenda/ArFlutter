@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../model/fossil.dart';
 
 
-class FossilService {
+class AmmoniteService {
 
   final CollectionReference _fossilCollectionRef =
   FirebaseFirestore.instance.collection('Fossils');
