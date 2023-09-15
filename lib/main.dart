@@ -1,3 +1,4 @@
+import 'package:ar/screens/connectivity/dependency_injection.dart';
 import 'package:ar/screens/fossili/fossil_view_model.dart';
 import 'package:ar/ui/splash.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -20,6 +21,7 @@ void main() async {
   sharedPreferences = await SharedPreferences.getInstance();
   await dotenv.load(fileName: "assets/config/.env");
   fossili = await viewmodel.fossilModel;
+  DependencyInjection.init();
   runApp(const MyApp());
 }
 

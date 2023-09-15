@@ -8,41 +8,39 @@ import 'package:get/get_core/src/get_main.dart';
 
 import 'costanti.dart';
 
-Widget customAlertDialog(BuildContext context,String text,bool esci) {
+Widget customAlertDialog(BuildContext context,String text) {
   return AlertDialog(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),
     title: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        const Text('USCITA APP'),
+        const Text('USCITA APP',style: TextStyle(fontFamily: 'PlayfairDisplay'),),
         Container(height: 50,
           width: 50,
           padding: const EdgeInsets.all(7),
           decoration: BoxDecoration(border: Border.all(color: white),
             shape: BoxShape.circle,
             color: marrone,),
-          child: Image.asset('assets/image/logo.png', height: 8, width: 8,),),
+          child: Image.asset('assets/image/logo.png', height:10, width: 10,),),
       ],
-    ), content:  Text(text),
+    ), content:  Text(text,style: const TextStyle(fontFamily: 'PlayfairDisplay'),),
     actions: [
       ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: white),
+        style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            backgroundColor: white),
         onPressed: () {
           Navigator.of(context).pop(false);
         },
         child:  Text(
-          "NO", style: TextStyle(color: marrone),),),
+          "RIMANI", style: TextStyle(color: marrone,fontFamily: 'PlayfairDisplay'),),),
       ElevatedButton(style: ElevatedButton.styleFrom(
-          backgroundColor:marrone),
+          backgroundColor:marrone,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)) ),
           onPressed: () {
-            if(esci ){exit(0);}
-            else{
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-            builder: (context) => const HiddenDrawer()));
-            }
+            exit(0);
           },
-          child: const Text("SI", style: TextStyle(color: white),))
+          child: const Text("ESCI", style: TextStyle(color: white,fontFamily: 'PlayfairDisplay'),))
     ],);
 
 }

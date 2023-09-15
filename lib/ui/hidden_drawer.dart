@@ -65,7 +65,7 @@ class _HiddenDrawerState extends State<HiddenDrawer> {
           selectedStyle: defaultTextStyle,
           colorLineSelected: Colors.black54,
         ),
-          FossilBag(),
+          const FossilBag(),
       ),
 
       ScreenHiddenDrawer(

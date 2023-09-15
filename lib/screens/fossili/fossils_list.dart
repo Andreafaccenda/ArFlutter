@@ -180,7 +180,7 @@ class _FossilsListState extends State<FossilsList> {
 
   Future<bool> showExitDialog()async {
     return await showDialog(barrierDismissible: false,context: context, builder: (context)=>
-        customAlertDialog(context,"Vuoi uscire dall'applicazione?",true),);
+        customAlertDialog(context,"Vuoi uscire dall'applicazione?"),);
   }
 }
 

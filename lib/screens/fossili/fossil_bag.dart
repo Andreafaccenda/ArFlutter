@@ -5,6 +5,7 @@ import '../../main.dart';
 import '../../model/fossil.dart';
 import '../../model/user_model.dart';
 import '../../widgets/costanti.dart';
+import '../../widgets/custom_dialog.dart';
 import '../auth/auth_view_model.dart';
 
 class FossilBag extends StatefulWidget {
@@ -161,47 +162,54 @@ class _FossilBagState extends State<FossilBag> {
           .toList(),
     );
   }
-
+  Future<bool> showExitDialog()async {
+    return await showDialog(barrierDismissible: false,context: context, builder: (context)=>
+        customAlertDialog(context,"Vuoi uscire dall'applicazione?"),);
+  }
 
   @override
   Widget build(BuildContext context) {
    if(listaVuota){
      return Scaffold(
        backgroundColor: grey300,
-       body: Stack(
-         children: [
-            Center(child: Text('Il tuo zaino è vuoto',
-             style: TextStyle(color: black54,fontSize: 25,fontWeight: FontWeight.w600,fontFamily: 'PlayfairDisplay'),),),
-           Positioned(
-             top: MediaQuery.of(context).size.height*0.50,
-             left: MediaQuery.of(context).size.width*0.35,
-             child:  Image.asset('assets/image/zaino.png',height:100),
-               ),
+       body: WillPopScope(onWillPop: showExitDialog,
+         child: Stack(
+           children: [
+              Center(child: Text('Il tuo zaino è vuoto',
+               style: TextStyle(color: black54,fontSize: 25,fontWeight: FontWeight.w600,fontFamily: 'PlayfairDisplay'),),),
+             Positioned(
+               top: MediaQuery.of(context).size.height*0.50,
+               left: MediaQuery.of(context).size.width*0.35,
+               child:  Image.asset('assets/image/zaino.png',height:100),
+                 ),
 
-         ],
+           ],
+         ),
        ),
      );
    }
    return Scaffold(
-     body: Column(children: [
-       // display selected item
-       // implement the List Wheel Scroll View
-       Expanded(
-         child: Container(
-           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-           width: double.infinity,
-           color: grey300,
-           child: listWheelScrollView(),
+     body: WillPopScope(onWillPop: showExitDialog,
+       child: Column(children: [
+         // display selected item
+         // implement the List Wheel Scroll View
+         Expanded(
+           child: Container(
+             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+             width: double.infinity,
+             color: grey300,
+             child: listWheelScrollView(),
+           ),
          ),
-       ),
-       Container(
-         width: double.infinity,
-         padding: const EdgeInsets.only(top:50,bottom: 50),
-         color: grey300,
-         alignment: Alignment.center,
-         child:  builtCard(),
-       ),
-     ]),
+         Container(
+           width: double.infinity,
+           padding: const EdgeInsets.only(top:50,bottom: 50),
+           color: grey300,
+           alignment: Alignment.center,
+           child:  builtCard(),
+         ),
+       ]),
+     ),
    );
 
   }

@@ -34,7 +34,7 @@ class _GuideToCatchFossilState extends State<GuideToCatchFossil> {
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
         backgroundColor: marrone,
-        title: const Text('Guida',style: TextStyle(color: white,fontSize: 25,fontWeight: FontWeight.w800),),
+        title: const Text('Guida',style: TextStyle(color: white,fontSize: 25,fontWeight: FontWeight.w800,fontFamily: 'PlayfairDisplay'),),
         centerTitle: true,
       ),
       body: Column(

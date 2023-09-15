@@ -1,15 +1,16 @@
-import 'dart:io';
 import 'package:ar/screens/auth/register_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../widgets/costanti.dart';
-import '../../widgets/custom_text.dart';
+import '../../widgets/custom_dialog.dart';
 import '../../widgets/square_tile.dart';
 import '../../widgets/validators.dart';
 import 'auth_view_model.dart';
 
 class LoginView extends StatefulWidget {
+  const LoginView({super.key});
+
   @override
   State<LoginView> createState() => _LoginViewState();
 }
@@ -18,9 +19,9 @@ class _LoginViewState extends State<LoginView>{
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final viewModel = AuthViewModel();
   bool _obscureText =true;
-  TextEditingController _controllerEmail = new TextEditingController();
-  TextEditingController _controllerPassword = new TextEditingController();
-  TextEditingController _controllerResetPassword = new TextEditingController();
+  final TextEditingController _controllerEmail =  TextEditingController();
+  final TextEditingController _controllerPassword =  TextEditingController();
+  TextEditingController _controllerResetPassword = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +46,7 @@ class _LoginViewState extends State<LoginView>{
                             const SizedBox(height: 25),
                             Padding(padding: const EdgeInsets.symmetric(horizontal: 30.0),
                               child: TextFormField(style:const TextStyle(color: Colors.black38),controller: _controllerEmail, textInputAction: TextInputAction.next, validator: validateEmail, onSaved: (value) {controller.email = value!;},
-                                decoration: InputDecoration(
-                                  enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.white),), focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade400),), fillColor: Colors.grey.shade200, filled: true, hintText: "Email", hintStyle: TextStyle(color: Colors.grey[500]),),),),
+                                decoration: InputDecoration(enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.white),), focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade400),), fillColor: Colors.grey.shade200, filled: true, hintText: "Email", hintStyle: TextStyle(color: Colors.grey[500]),),),),
                             const SizedBox(height: 10),
                             Padding(padding: const EdgeInsets.symmetric(horizontal: 30.0),
                               child: TextFormField(style:const TextStyle(color: Colors.black38),controller: _controllerPassword, textInputAction: TextInputAction.next, validator: validatePassword, onSaved:(value) {controller.password=value!;}, decoration: InputDecoration(
@@ -96,35 +96,22 @@ class _LoginViewState extends State<LoginView>{
   }
   Future<bool> showExitDialog()async {
     return await showDialog(barrierDismissible: false,context: context, builder: (context)=>
-        AlertDialog(shape:  RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              const Text('USCITA APP'),
-              Container(height: 50, width: 50, padding: const EdgeInsets.all(7), decoration: BoxDecoration(border: Border.all(color: Colors.white), shape: BoxShape.circle, color: const Color.fromRGBO(210, 180, 140, 1),),
-                child: Image.asset('assets/image/logo.png', height: 8, width: 8,),),
-            ],
-          ), content: const Text("Vuoi uscire dall'applicazione ?",),
-          actions: [
-            ElevatedButton(style: ElevatedButton.styleFrom( backgroundColor: Colors.white), onPressed: (){Navigator.of(context).pop(false);},
-              child: const Text("NO",style: TextStyle(color:Color.fromRGBO(210, 180, 140, 1) ),),),
-            ElevatedButton(style: ElevatedButton.styleFrom( backgroundColor: const Color.fromRGBO(210, 180, 140, 1)),
-                onPressed: (){exit(0);},
-                child: const Text("SI",style:TextStyle(color: Colors.white),))],));
+        customAlertDialog(context,"Vuoi uscire dall'applicazione?"),);
   }
   void bottomSheet(context) {
-    showModalBottomSheet(context: context, backgroundColor: Colors.transparent, isScrollControlled: true, builder: (context) => Container(padding: const EdgeInsets.fromLTRB(20, 40, 20, 10), height: 260, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: const BorderRadius.only(topRight: Radius.circular(25), topLeft: Radius.circular(25),),),
+    showModalBottomSheet(context: context, backgroundColor: trasparent, isScrollControlled: true, builder: (context) => Container(padding: const EdgeInsets.fromLTRB(20, 40, 20, 10), height: 260, decoration: BoxDecoration(color: marrone, borderRadius: const BorderRadius.only(topRight: Radius.circular(25), topLeft: Radius.circular(25),),),
       child: Column(
         children: [
-          Column(mainAxisAlignment: MainAxisAlignment.start,
+           Column(mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              CustomText(text: 'Inserendo la tua email,ti verrà inviata un email per ripristinare la password del tuo account',fontSize: 14,color: Colors.black,),],),
+              Text('Recupera la tua password',style: TextStyle(fontSize: 15,fontWeight:FontWeight.w500,color:black54,fontFamily: 'PlayfairDisplay')),],),
           const SizedBox(height: 10,),
           Padding(padding: const EdgeInsets.all(20),
-            child: TextFormField(controller: _controllerResetPassword, textInputAction: TextInputAction.next, validator: validatePassword, onSaved:(value) {_controllerResetPassword=value! as TextEditingController;}, decoration: formDecoration('Email',Icons.email_outlined,),),),
+            child: TextFormField(style: TextStyle(color: black54),controller: _controllerResetPassword, textInputAction: TextInputAction.next, validator: validatePassword, onSaved:(value) {_controllerResetPassword=value! as TextEditingController;},
+                decoration: InputDecoration(enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.white),), focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade400),), fillColor: Colors.grey.shade200, filled: true, hintText: "Email", hintStyle: TextStyle(color: black54),icon: const Icon(Icons.email,color: white,),)),),
           const SizedBox(height: 10,),
-          CupertinoButton(padding: const EdgeInsets.all(10), borderRadius:  const BorderRadius.all(Radius.circular(10)), onPressed: (){viewModel.sendPasswordResetEmail(_controllerResetPassword.text.toString());}, color: const Color.fromRGBO(210, 180, 140, 1),
-            child: const Text('Reset Password', style: style16White,),),],),),);
+          CupertinoButton(padding: const EdgeInsets.all(10), borderRadius:  const BorderRadius.all(Radius.circular(10)), onPressed: (){viewModel.sendPasswordResetEmail(_controllerResetPassword.text.toString());}, color: grey300,
+            child:  Text('Reset Password', style: TextStyle(color: black54),),),],),),);
   }
 
 }

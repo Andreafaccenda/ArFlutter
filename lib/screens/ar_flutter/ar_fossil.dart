@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'package:ar/widgets/progressBar.dart';
 import 'package:ar_flutter_plugin/managers/ar_location_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
@@ -15,19 +13,14 @@ import 'package:ar_flutter_plugin/datatypes/node_types.dart';
 import 'package:ar_flutter_plugin/datatypes/hittest_result_types.dart';
 import 'package:ar_flutter_plugin/models/ar_node.dart';
 import 'package:ar_flutter_plugin/models/ar_hittest_result.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:vector_math/vector_math_64.dart' as VectorMath;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
-
-import '../../helpers/directions_handler.dart';
 import '../../model/fossil.dart';
 import '../../model/user_model.dart';
-import '../../ui/hidden_drawer.dart';
 import '../../widgets/costanti.dart';
 import '../../widgets/custom_dialog.dart';
 import '../auth/auth_view_model.dart';
@@ -60,8 +53,8 @@ class _ArFossilState extends State<ArFossil> {
   String lastUploadedAnchor = "";
   late   StreamSubscription _getPositionSubscription;
   AvailableModel selectedModel = AvailableModel(
-      "Duck",
-      "https://github.com/KhronosGroup/glTF-Sample-Models/raw/master/2.0/Duck/glTF-Binary/Duck.glb",
+      "ammonite",
+      "https://github.com/Andreafaccenda/fossil_world/blob/master/ammonite3.glb?raw=true",
       "");
   bool readyToUpload = false;
   bool readyToDownload = true;
@@ -161,7 +154,7 @@ class _ArFossilState extends State<ArFossil> {
         appBar: AppBar(
             backgroundColor:  marrone,
             centerTitle: true,
-            title: const Text('Cattura',style: TextStyle(color: white,fontWeight: FontWeight.bold,fontSize: 20),),
+            title: const Text('Cattura',style: TextStyle(color: white,fontWeight: FontWeight.bold,fontSize: 20,fontFamily: 'PlayfairDisplay'),),
             actions: <Widget>[
               IconButton(
                 icon: Image.asset('assets/image/choose.png',color: Colors.white,height: 30,),
@@ -209,7 +202,7 @@ class _ArFossilState extends State<ArFossil> {
                       children: [
                         Image.asset('assets/image/location.png',height: 30,color: vicino ? green: red,),
                         const SizedBox(height: 5,),
-                        Text('Coordinate',style: TextStyle(color: vicino ? green: red,fontSize: 10,fontWeight: FontWeight.w700),),
+                        Text('Coordinate',style: TextStyle(color: vicino ? green: red,fontSize: 10,fontWeight: FontWeight.w700,fontFamily: 'PlayfairDisplay'),),
                     ],),),
                     const SizedBox(width: 10),
                     Visibility(
@@ -222,7 +215,7 @@ class _ArFossilState extends State<ArFossil> {
                       children: [
                           Image.asset('assets/image/icon_cattura.png',height: 30,),
                           const SizedBox(height: 5,),
-                          Text('Cattura',style: TextStyle(color: black54,fontSize: 10,fontWeight: FontWeight.w700),),
+                          Text('Cattura',style: TextStyle(color: black54,fontSize: 10,fontWeight: FontWeight.w700,fontFamily: 'PlayfairDisplay'),),
                       ],
                       ),),),
                     ),
@@ -233,7 +226,7 @@ class _ArFossilState extends State<ArFossil> {
                             child:  Column(
                               children: [
                                 IconButton(onPressed: onDownloadButtonPressed, icon:  Image.asset('assets/image/download.png',height: 30,color: vicino ? green: red,)),
-                                Text('Download',style: TextStyle(color: vicino ? green: red,fontSize: 10,fontWeight: FontWeight.w700),),
+                                Text('Download',style: TextStyle(color: vicino ? green: red,fontSize: 10,fontWeight: FontWeight.w700,fontFamily: 'PlayfairDisplay'),),
                               ],
                             ),),
                         ),
@@ -244,7 +237,7 @@ class _ArFossilState extends State<ArFossil> {
                         children: [
                         Image.asset('assets/image/icon_cestino.png',height: 30,color: black54,),
                         const SizedBox(height: 5,),
-                        Text('Cestino',style: TextStyle(color: black54,fontSize: 10,fontWeight: FontWeight.w700),),
+                        Text('Cestino',style: TextStyle(color: black54,fontSize: 10,fontWeight: FontWeight.w700,fontFamily: 'PlayfairDisplay'),),
                         ],
                         ),),),
                         ],
@@ -258,7 +251,7 @@ class _ArFossilState extends State<ArFossil> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text('Download \n in corso: ',style: TextStyle(color: black54,fontWeight: FontWeight.w300),),
+                              Text('Download \n in corso: ',style: TextStyle(color: black54,fontWeight: FontWeight.w300,fontFamily: 'PlayfairDisplay',fontSize: 11),),
                               const SizedBox(width: 5,),
                               const progressBar(),
                             ],
@@ -304,7 +297,7 @@ class _ArFossilState extends State<ArFossil> {
       showFeaturePoints: false,
       showPlanes: true,
       customPlaneTexturePath: "assets/image/triangle.png",
-      showWorldOrigin: true,
+      showWorldOrigin: false,
       showAnimatedGuide: false,
     );
     this.arObjectManager!.onInitialize();
@@ -326,10 +319,10 @@ class _ArFossilState extends State<ArFossil> {
             showAlertDialog(
                 context,
                 "Action Required",
-                "To use cloud anchor functionality, please enable your location services",
-                "Settings",
+                "Per usa le funzionalità di cloud anchor,per favore abilita i servizi di geolocalizzazione",
+                "Impostazioni",
                 this.arLocationManager!.openLocationServicesSettings,
-                "Cancel");
+                "Cancella");
             break;
           }
 
@@ -338,10 +331,10 @@ class _ArFossilState extends State<ArFossil> {
             showAlertDialog(
                 context,
                 "Action Required",
-                "To use cloud anchor functionality, please allow the app to access your device's location",
-                "Retry",
+                "Per usa le funzionalità di cloud anchor, aiuta l'applicazione ad accedere alla tua posizione corrente",
+                "Riprova",
                 this.arLocationManager!.startLocationUpdates,
-                "Cancel");
+                "Cancella");
             break;
           }
 
@@ -350,10 +343,10 @@ class _ArFossilState extends State<ArFossil> {
             showAlertDialog(
                 context,
                 "Action Required",
-                "To use cloud anchor functionality, please allow the app to access your device's location",
-                "Settings",
+                "Per usa le funzionalità di cloud anchor, aiuta l'applicazione ad accedere alla tua posizione corrente",
+                "Impostazioni",
                 this.arLocationManager!.openAppPermissionSettings,
-                "Cancel");
+                "Cancella");
             break;
           }
 
@@ -369,7 +362,7 @@ class _ArFossilState extends State<ArFossil> {
 
   void onModelSelected(AvailableModel model) {
     this.selectedModel = model;
-    this.arSessionManager!.onError(model.name + " selected");
+    this.arSessionManager!.onError("Selezionato "+ model.name);
     setState(() {
       modelChoiceActive = false;
     });
@@ -392,41 +385,7 @@ class _ArFossilState extends State<ArFossil> {
       });
     }
   }
-  /*Future<bool> showExit()async {
-    return await showDialog(barrierDismissible: false,context: context, builder: (context)=>
-        AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              const Text('USCITA APP'),
-              Container(height: 50,
-                width: 50,
-                padding: const EdgeInsets.all(7),
-                decoration: BoxDecoration(border: Border.all(color: white),
-                  shape: BoxShape.circle,
-                  color: marrone,),
-                child: Image.asset('assets/image/logo.png', height: 8, width: 8,),),
-            ],
-          ), content:  Text('Torna indietro per catturare altri fossili',style: TextStyle(fontWeight: FontWeight.w500,color: white),),
-          actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: white),
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child:  Text(
-                "NO", style: TextStyle(color: marrone,fontWeight: FontWeight.w300),),),
-            ElevatedButton(style: ElevatedButton.styleFrom(
-                backgroundColor:marrone),
-                onPressed: () {
-                  Get.to(const HiddenDrawer());
-                },
-                child: const Text("SI", style: TextStyle(color: white,fontWeight: FontWeight.w300),))
-          ],),);
 
-  }
-*/
   Future<void> onNodeTapped(List<String> nodeNames) async {
     var foregroundNode = nodes.firstWhere((element) => element.name == nodeNames.first);
     this.arSessionManager!.onError(foregroundNode.data!["onTapText"]);
@@ -449,7 +408,7 @@ class _ArFossilState extends State<ArFossil> {
             scale: VectorMath.Vector3(0.2, 0.2, 0.2),
             position: VectorMath.Vector3(0.0, 0.0, 0.0),
             rotation: VectorMath.Vector4(1.0, 0.0, 0.0, 0.0),
-            data: {"onTapText": "I am a " + this.selectedModel.name});
+            data: {"onTapText": "Sono " + this.selectedModel.name});
         bool? didAddNodeToAnchor =
         await this.arObjectManager!.addNode(newNode, planeAnchor: newAnchor);
         if (didAddNodeToAnchor!) {
@@ -458,10 +417,10 @@ class _ArFossilState extends State<ArFossil> {
             readyToUpload = true;
           });
         } else {
-          this.arSessionManager!.onError("Adding Node to Anchor failed");
+          this.arSessionManager!.onError("Aggiunta Node all' Anchor fallita");
         }
       } else {
-        this.arSessionManager!.onError("Adding Anchor failed");
+        this.arSessionManager!.onError("Aggiunta Anchor fallita");
       }
     }
   }
@@ -486,7 +445,7 @@ class _ArFossilState extends State<ArFossil> {
       readyToDownload = true;
       readyToUpload = false;
     });
-    this.arSessionManager!.onError("Upload successful");
+    this.arSessionManager!.onError("Upload avvenuto con successo");
   }
 
   ARAnchor onAnchorDownloaded(Map<String,dynamic> serializedAnchor) {
@@ -527,7 +486,7 @@ class _ArFossilState extends State<ArFossil> {
     } else {
       this
           .arSessionManager!
-          .onError("Location updates not running, can't download anchors");
+          .onError("Location aggiornata non correre, non possiamo fare il download dell'anchor");
     }
   }
   calculateDistance() {
