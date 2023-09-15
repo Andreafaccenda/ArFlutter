@@ -92,7 +92,7 @@ class _SplashState extends State<Splash> {
               child: Image.asset('assets/image/logo.png', height: 35, width: 35,),),
             const SpinKitCircle(color: Color.fromRGBO(210, 180, 140, 1), size: 50.0,),
             const SizedBox(height: 20,),
-            Center(child: Text('Inizia ora la tua avventura!',style: TextStyle(color: black54,fontSize: 25 ,fontWeight: FontWeight.w300),),),
+            Center(child: Text('Inizia ora la tua avventura!',style: TextStyle(color: black54,fontSize: 25 ,fontFamily: 'PlayfairDisplay',fontWeight: FontWeight.w300),),),
           ],
         ),
       ),

@@ -33,6 +33,7 @@ class _HiddenDrawerState extends State<HiddenDrawer> {
     fontWeight: FontWeight.w300,
     color: Colors.white,
     letterSpacing: 5,
+    fontFamily: 'PlayfairDisplay'
   );
   @override
   void initState() {
@@ -64,7 +65,7 @@ class _HiddenDrawerState extends State<HiddenDrawer> {
           selectedStyle: defaultTextStyle,
           colorLineSelected: Colors.black54,
         ),
-         const FossilBag(),
+          FossilBag(),
       ),
 
       ScreenHiddenDrawer(

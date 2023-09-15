@@ -12,9 +12,11 @@ packages:
   ar_flutter_plugin:
     dependency: "direct main"
     description:
-      path: "C:\\Users\\asus\\Documents\\ar_flutter_plugin-main"
-      relative: false
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: df595e7e22ec2a92f2dc0d5327da91537770224d
+      url: "https://github.com/Andreafaccenda/ar_flutter_plugin"
+    source: git
     version: "0.7.3"
   args:
     dependency: transitive
@@ -152,14 +154,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0+3"
-  duration_button:
-    dependency: "direct main"
-    description:
-      name: duration_button
-      sha256: "0e50c0c4278e12032e890b36b17281cf78321281395ae4cd0a0b84c27ebac7fa"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
   fake_async:
     dependency: transitive
     description:
@@ -463,6 +457,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.6.5"
+  google_fonts:
+    dependency: "direct main"
+    description:
+      name: google_fonts
+      sha256: "6b6f10f0ce3c42f6552d1c70d2c28d764cf22bb487f50f66cca31dcd5194f4d6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.4"
   google_identity_services_web:
     dependency: transitive
     description:
@@ -747,18 +749,18 @@ packages:
     dependency: transitive
     description:
       name: permission_handler
-      sha256: "63e5216aae014a72fe9579ccd027323395ce7a98271d9defa9d57320d001af81"
+      sha256: bc56bfe9d3f44c3c612d8d393bd9b174eb796d706759f9b495ac254e4294baa5
       url: "https://pub.dev"
     source: hosted
-    version: "10.4.3"
+    version: "10.4.5"
   permission_handler_android:
     dependency: transitive
     description:
       name: permission_handler_android
-      sha256: d74e77a5ecd38649905db0a7d05ef16bed42ff263b9efb73ed794317c5764ec3
+      sha256: "59c6322171c29df93a22d150ad95f3aa19ed86542eaec409ab2691b8f35f9a47"
       url: "https://pub.dev"
     source: hosted
-    version: "10.3.4"
+    version: "10.3.6"
   permission_handler_apple:
     dependency: transitive
     description:
@@ -771,10 +773,10 @@ packages:
     dependency: transitive
     description:
       name: permission_handler_platform_interface
-      sha256: "7c6b1500385dd1d2ca61bb89e2488ca178e274a69144d26bbd65e33eae7c02a9"
+      sha256: f2343e9fa9c22ae4fd92d4732755bfe452214e7189afcc097380950cf567b4b2
       url: "https://pub.dev"
     source: hosted
-    version: "3.11.3"
+    version: "3.11.5"
   permission_handler_windows:
     dependency: transitive
     description:

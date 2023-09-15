@@ -17,39 +17,46 @@ class FossilBag extends StatefulWidget {
 class _FossilBagState extends State<FossilBag> {
   final viewModel = AuthViewModel();
   late UserModel user;
-  List<FossilModel> fossili_catturati = [];
-
+  List<FossilModel>? fossili_catturati;
+  bool listaVuota = false;
   @override
   void initState() {
     super.initState();
-    //_getUser();
+    _getUser();
   }
 
- /* _getUser()async{
+  _getUser()async{
     List<FossilModel> lista = [];
     var prefId = await viewModel.getIdSession();
     user = (await viewModel.getUserFormId(prefId))!;
-    for(var id in user.lista_fossili ?? <String>[]) {
-      for(var fossile in fossili){
-        if(fossile.id == id){
-          lista.add(fossile);
+    if(user.lista_fossili!.isEmpty){
+      setState(() {
+        listaVuota=true;
+      });
+    }else{
+      setState(() {
+        listaVuota=false;
+      });
+      for(var id in user.lista_fossili ?? <String>[]) {
+        for(var fossile in fossili){
+          if(fossile.id == id){
+            lista.add(fossile);
+          }
         }
       }
+      setState(() {
+        fossili_catturati = lista;
+      });
     }
-    setState(() {
-      fossili_catturati = lista;
-    });
-
   }
-*/
   Widget builtCard(){
     return  Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(15),color: white,
-        boxShadow: [BoxShadow(
-          color: Colors.grey.withOpacity(0.5),
-          spreadRadius: 3,
-          blurRadius: 10,
-          offset: const Offset(0,3),
-        )],),
+      boxShadow: [BoxShadow(
+        color: Colors.grey.withOpacity(0.5),
+        spreadRadius: 3,
+        blurRadius: 10,
+        offset: const Offset(0,3),
+      )],),
       width: 200,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -61,20 +68,20 @@ class _FossilBagState extends State<FossilBag> {
                 padding: const EdgeInsets.only(top: 10.0),
                 child: Container(decoration: BoxDecoration(border: Border.all(color: marrone!),shape: BoxShape.circle),
                   child: CircleAvatar(
-                    backgroundImage: NetworkImage(fossili[_selectedItemIndex].immagine.toString()),
+                    backgroundImage: NetworkImage(fossili_catturati![_selectedItemIndex].immagine.toString()),
                     radius: 35,
                   ),
                 ),
               ),
             ),
-            Center(child: Text(fossili[_selectedItemIndex].nome.toString(),style: TextStyle(color: marrone,fontSize: 20,fontWeight: FontWeight.w700),)),
+            Center(child: Text(fossili_catturati![_selectedItemIndex].nome.toString(),style: TextStyle(color: marrone,fontSize: 20,fontWeight: FontWeight.w700),)),
             const SizedBox(height: 5,),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Image.asset('assets/image/description.png',height: 20,color: marrone,),
                 const SizedBox(width: 10,),
-                Text(fossili[_selectedItemIndex].descrizione.toString(),
+                Text(fossili_catturati![_selectedItemIndex].descrizione.toString(),
                   overflow: TextOverflow.ellipsis,style:  TextStyle(
                       color: marrone,fontWeight: FontWeight.w500, fontSize: 12),),
               ],
@@ -85,14 +92,14 @@ class _FossilBagState extends State<FossilBag> {
               children: [
                 Image.asset('assets/image/icon_location.png',height: 20,color: marrone,),
                 const SizedBox(width: 10,),
-                Text(fossili[_selectedItemIndex].indirizzo.toString(),
+                Text(fossili_catturati![_selectedItemIndex].indirizzo.toString(),
                   overflow: TextOverflow.ellipsis,style:  TextStyle(
                       color: marrone,fontWeight: FontWeight.w500, fontSize: 12),),
               ],
             ),
             const SizedBox(height: 10,),
             GestureDetector(onTap: () {
-              Get.to(DettagliFossile(model: fossili[_selectedItemIndex]));
+              Get.to(DettagliFossile(model: fossili_catturati![_selectedItemIndex]));
             },
               child: Center(
                 child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: white,),
@@ -103,12 +110,12 @@ class _FossilBagState extends State<FossilBag> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30),
                         child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text('Vai ai dettagli',style: TextStyle(color: marrone,fontSize: 10,fontWeight: FontWeight.w700),),
-                              Image.asset('assets/image/arrow.png',height: 15,color: marrone,),
-                            ],
-                          ),
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text('Vai ai dettagli',style: TextStyle(color: marrone,fontSize: 10,fontWeight: FontWeight.w700),),
+                            Image.asset('assets/image/arrow.png',height: 15,color: marrone,),
+                          ],
+                        ),
                       ),
                     ],
                   ),),
@@ -138,11 +145,11 @@ class _FossilBagState extends State<FossilBag> {
         });
       },
       // children of the list
-      children: fossili
-          .map((e) => Container(
+      children: fossili_catturati
+          !.map((e) => Container(
         decoration: BoxDecoration(
           // make selected item background color is differ from the rest
-          color: fossili.indexOf(e) == _selectedItemIndex
+          color: fossili_catturati!.indexOf(e) == _selectedItemIndex
               ? marrone
               : white,
           shape: BoxShape.circle,),
@@ -155,28 +162,47 @@ class _FossilBagState extends State<FossilBag> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(children: [
-        // display selected item
-        // implement the List Wheel Scroll View
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            width: double.infinity,
-            color: grey300,
-            child: listWheelScrollView(),
-          ),
-        ),
-        Container(
-            width: double.infinity,
-            padding: const EdgeInsets.only(top:50,bottom: 50),
-            color: grey300,
-            alignment: Alignment.center,
-            child:  builtCard(),
-                ),
-      ]),
-    );
+   if(listaVuota){
+     return Scaffold(
+       backgroundColor: grey300,
+       body: Stack(
+         children: [
+            Center(child: Text('Il tuo zaino è vuoto',
+             style: TextStyle(color: black54,fontSize: 25,fontWeight: FontWeight.w600,fontFamily: 'PlayfairDisplay'),),),
+           Positioned(
+             top: MediaQuery.of(context).size.height*0.50,
+             left: MediaQuery.of(context).size.width*0.35,
+             child:  Image.asset('assets/image/zaino.png',height:100),
+               ),
+
+         ],
+       ),
+     );
+   }
+   return Scaffold(
+     body: Column(children: [
+       // display selected item
+       // implement the List Wheel Scroll View
+       Expanded(
+         child: Container(
+           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+           width: double.infinity,
+           color: grey300,
+           child: listWheelScrollView(),
+         ),
+       ),
+       Container(
+         width: double.infinity,
+         padding: const EdgeInsets.only(top:50,bottom: 50),
+         color: grey300,
+         alignment: Alignment.center,
+         child:  builtCard(),
+       ),
+     ]),
+   );
+
   }
 }
