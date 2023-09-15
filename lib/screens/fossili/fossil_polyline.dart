@@ -12,7 +12,6 @@ import '../../main.dart';
 import '../../model/fossil.dart';
 import '../../widgets/costanti.dart';
 import '../ar_flutter/guideToCatchFossil.dart';
-import '../navigation/fossil_navigator.dart';
 const MAPBOX_ACCESS_TOKEN='pk.eyJ1IjoiZmFjYzAwIiwiYSI6ImNsam9kc3kzbDFtcHMzZXBqdWQ2YjNzeDcifQ.koA0RgNUY0hLmiOT6W1yqg';
 
 class FossilPolyline extends StatefulWidget {
@@ -71,7 +70,7 @@ class _FossilPolylineState extends State<FossilPolyline> {
 
   Widget carouselCard() {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.17,
+      height: MediaQuery.of(context).size.height * 0.18,
       decoration: BoxDecoration(
         color: marrone,
         border: Border.all(color: white),
@@ -97,7 +96,7 @@ class _FossilPolylineState extends State<FossilPolyline> {
                   Text(
                     widget.model.nome.toString(),
                     style: const TextStyle(
-                      color: white,fontWeight: FontWeight.w800, fontSize: 16),
+                      color: white,fontWeight: FontWeight.w800, fontFamily: 'PlayfairDisplay',fontSize: 16),
                   ),
                   const SizedBox(height: 5,),
                   Row(
@@ -105,7 +104,7 @@ class _FossilPolylineState extends State<FossilPolyline> {
                       Image.asset('assets/image/icon_location.png',height: 20,color: white,),
                       Text(widget.model.indirizzo.toString(),
                           overflow: TextOverflow.ellipsis,style: const TextStyle(
-                            color: white,fontWeight: FontWeight.w500, fontSize: 12),),
+                            color: white,fontWeight: FontWeight.w500,fontFamily: 'PlayfairDisplay', fontSize: 12),),
                     ],
                   ),
                   const SizedBox(height: 5),
@@ -115,7 +114,7 @@ class _FossilPolylineState extends State<FossilPolyline> {
                       const SizedBox(width: 5,),
                       Text( '${distance.toStringAsFixed(2)} km',
                         overflow: TextOverflow.ellipsis,style: const TextStyle(
-                            color: white,fontWeight: FontWeight.w400, fontSize: 12),),
+                            color: white,fontWeight: FontWeight.w400, fontFamily: 'PlayfairDisplay',fontSize: 12),),
                     ],
                   ),
                   const SizedBox(height: 5,),
@@ -125,7 +124,7 @@ class _FossilPolylineState extends State<FossilPolyline> {
                       const SizedBox(width: 5,),
                       Text( '${duration.toStringAsFixed(2)} min',
                         overflow: TextOverflow.ellipsis,style: const TextStyle(
-                            color: white,fontWeight: FontWeight.w400, fontSize: 12),),
+                            color: white,fontWeight: FontWeight.w400, fontFamily: 'PlayfairDisplay',fontSize: 12),),
                     ],
                   ),
                 ],
@@ -223,7 +222,8 @@ class _FossilPolylineState extends State<FossilPolyline> {
           const SizedBox(height: 10,),
           FloatingActionButton(
               heroTag: 'default FloatingActionButton tag',
-              onPressed: (){Get.to( NavigationFossils(model: widget.model));},
+              onPressed: (){},
+              //Get.to( NavigationFossils(model: widget.model));
               backgroundColor: marrone,
               child:  Image.asset('assets/image/icon_navigazione.png',height: 30,)
           ),

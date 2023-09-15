@@ -68,6 +68,7 @@ class _FossilsListState extends State<FossilsList> {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
+              Get.to(DettagliFossile(model: lista[index]));
             },
             child: Container(
               margin: const EdgeInsetsDirectional.fromSTEB(0, 0, 10, 20),
@@ -93,10 +94,10 @@ class _FossilsListState extends State<FossilsList> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(lista[index].nome.toString(),style:  TextStyle(color: black54,fontSize: 14,fontWeight: FontWeight.bold),),
+                            Text(lista[index].nome.toString(),style:  TextStyle(color: black54,fontFamily: 'PlayfairDisplay',fontSize: 14,fontWeight: FontWeight.bold),),
                             const SizedBox(height: 2,),
                             Text("${lista[index]
-                                .descrizione}",style:  TextStyle(color: black54,fontSize: 12,fontWeight: FontWeight.w500),),
+                                .descrizione}",style:  TextStyle(color: black54,fontFamily: 'PlayfairDisplay',fontSize: 12,fontWeight: FontWeight.w500),),
                             const SizedBox(height: 5,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -108,7 +109,7 @@ class _FossilsListState extends State<FossilsList> {
                                     decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: white,),
                                     child:  Column(
                                       children: [
-                                        Image.asset('assets/image/icon_location.png',height: 30,color: black54,),
+                                        Image.asset('assets/image/icon_mappa.png',height: 30),
                                       ],
                                     ),),),
                                 const SizedBox(width: 15,),
@@ -125,10 +126,6 @@ class _FossilsListState extends State<FossilsList> {
                               ],
                             ),
                           ],),),
-                      const SizedBox(width: 27,),
-                      GestureDetector(onTap:() {Get.to(DettagliFossile(model: lista[index]));},
-                        child: Image.asset('assets/image/arrow.png',height: 30,color: black54,),
-                        ),
                     ],),),),
             ),
           );
@@ -162,7 +159,7 @@ class _FossilsListState extends State<FossilsList> {
             BoxShadow(color: Colors.grey, blurRadius: 2.0, spreadRadius: 0.0, offset: Offset(2.0, 2.0), // shadow direction: bottom right
             )],),
         child: TextFormField(onChanged: (value) =>{filtraLista(value), setState(() {}), },
-          decoration:  InputDecoration(hintText: 'Ricerca fossili', hintStyle: TextStyle(color: black54,fontWeight: FontWeight.w400), border: InputBorder.none, prefixIcon: Icon(Icons.search, color:black54,),), style:  TextStyle(color:black54),),),);
+          decoration:  InputDecoration(hintText: 'Ricerca fossili', hintStyle: TextStyle(color: black54,fontFamily: 'PlayfairDisplay',fontWeight: FontWeight.w400), border: InputBorder.none, prefixIcon: Icon(Icons.search, color:black54,),), style:  TextStyle(color:black54),),),);
     }
   void filtraLista(String text) {
     List<FossilModel> listaCompleta = viewModel.fossilModel;

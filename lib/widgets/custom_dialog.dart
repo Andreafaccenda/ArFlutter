@@ -1,10 +1,6 @@
 import 'dart:io';
-import 'package:ar/screens/fossili/fossils_list.dart';
-import 'package:ar/ui/hidden_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 import 'costanti.dart';
 
@@ -44,74 +40,142 @@ Widget customAlertDialog(BuildContext context,String text) {
     ],);
 
 }
- Widget customSnackBar(String str,bool catturato){
-  return  Stack(
-    clipBehavior: Clip.none,
-    children: [
-      Container(
-        height: 90,
-        padding: const EdgeInsets.all(16),
-        decoration:  BoxDecoration(
-          color: marrone,
-          borderRadius: const BorderRadius.all(Radius.circular(20)),
-        ),
-        child:  Row(
-          children: [
-            const SizedBox(width: 48,),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Fossil World',style: TextStyle(color: white,fontSize: 18),),
-                  const SizedBox(height: 5,),
-                  Text(str,style: const TextStyle(color: white,fontSize: 12),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      Positioned(bottom:0,
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            bottomLeft: Radius.circular(20),
+ Widget customSnackBarDownload() {
+   return Stack(
+     clipBehavior: Clip.none,
+     children: [
+       Container(
+         height: 90,
+         padding: const EdgeInsets.all(16),
+         decoration:  const BoxDecoration(
+           color: Colors.green,
+           borderRadius:  BorderRadius.all(Radius.circular(20)),
+         ),
+         child: const Row(
+           children: [
+             SizedBox(width: 48,),
+             Expanded(
+               child: Column(
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                 children: [
+                   Text('Fossil World', style: TextStyle(color: white,
+                       fontSize: 18,
+                       fontFamily: 'PlayfairDisplay'),),
+                   SizedBox(height: 5,),
+                   Text('Download avvenuto con successo', style: TextStyle(
+                       color: white,
+                       fontSize: 11,
+                       fontFamily: 'PlayfairDisplay'),
+                     maxLines: 2,
+                     overflow: TextOverflow.ellipsis,
+                   ),
+                 ],
+               ),
+             ),
+           ],
+         ),
+       ),
+       Positioned(bottom: 0,
+         child: ClipRRect(
+           borderRadius: const BorderRadius.only(
+             bottomLeft: Radius.circular(20),
+           ),
+           child: SvgPicture.asset('assets/image/bubbles.svg', height: 48,
+             width: 40,
+             color: Colors.black38,),
+         ),
+       ),
+       Positioned(
+         top: -20,
+         left: 0,
+         child: Stack(
+           alignment: Alignment.center,
+           children: [
+             SvgPicture.asset('assets/image/fail.svg',
+               height: 40,
+               color: Colors.black38,),
+             Positioned(
+               top: 10,
+               child: Image.asset(
+                 'assets/image/ammonite.gif',
+                 height: 25,),
+             ),
+           ],
+         ),
+       )
+     ],
+   );
+ }
+
+  Widget customSnackBar(String str,bool catturato){
+    return  Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          height: 90,
+          padding: const EdgeInsets.all(16),
+          decoration:  BoxDecoration(
+            color: marrone,
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
           ),
-          child: SvgPicture.asset('assets/image/bubbles.svg',height: 48,width: 40,color: Colors.black38,),
-        ),
-      ),
-      Positioned(
-        top: -20,
-        left: 0,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            SvgPicture.asset('assets/image/fail.svg',
-              height: 40,
-            color:  Colors.black38,),
-            Positioned(
-              top: 10,
-              child: Visibility(
-                visible: catturato,
-                child: Image.asset(
-                  'assets/image/pickage.png',
-                  height: 16,),
+          child:  Row(
+            children: [
+              const SizedBox(width: 48,),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Fossil World',style: TextStyle(color: white,fontSize: 18,fontFamily: 'PlayfairDisplay'),),
+                    const SizedBox(height: 5,),
+                    Text(str,style: const TextStyle(color: white,fontSize: 11,fontFamily: 'PlayfairDisplay'),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Positioned(
-              top: 10,
-              child: Visibility(
-                visible: !catturato,
-                child: SvgPicture.asset(
-                  'assets/image/close.svg',
-                  height: 16,),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-      )
-    ],
-  );
+        Positioned(bottom:0,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(20),
+            ),
+            child: SvgPicture.asset('assets/image/bubbles.svg',height: 48,width: 40,color: Colors.black38,),
+          ),
+        ),
+        Positioned(
+          top: -20,
+          left: 0,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              SvgPicture.asset('assets/image/fail.svg',
+                height: 40,
+                color:  Colors.black38,),
+              Positioned(
+                top: 10,
+                child: Visibility(
+                  visible: catturato,
+                  child: Image.asset(
+                    'assets/image/pickage.png',
+                    height: 16,),
+                ),
+              ),
+              Positioned(
+                top: 10,
+                child: Visibility(
+                  visible: !catturato,
+                  child: SvgPicture.asset(
+                    'assets/image/close.svg',
+                    height: 16,),
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
+
  }

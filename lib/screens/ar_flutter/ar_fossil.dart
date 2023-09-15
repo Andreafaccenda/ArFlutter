@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+
 import 'package:ar/widgets/progressBar.dart';
 import 'package:ar_flutter_plugin/managers/ar_location_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
@@ -53,8 +55,8 @@ class _ArFossilState extends State<ArFossil> {
   String lastUploadedAnchor = "";
   late   StreamSubscription _getPositionSubscription;
   AvailableModel selectedModel = AvailableModel(
-      "ammonite",
-      "https://github.com/Andreafaccenda/fossil_world/blob/master/ammonite3.glb?raw=true",
+      "Duck",
+      "https://github.com/KhronosGroup/glTF-Sample-Models/raw/master/2.0/Duck/glTF-Binary/Duck.glb",
       "");
   bool readyToUpload = false;
   bool readyToDownload = true;
@@ -150,136 +152,136 @@ class _ArFossilState extends State<ArFossil> {
     }
 
     return Scaffold(
-        backgroundColor: grey300,
-        appBar: AppBar(
-            backgroundColor:  marrone,
-            centerTitle: true,
-            title: const Text('Cattura',style: TextStyle(color: white,fontWeight: FontWeight.bold,fontSize: 20,fontFamily: 'PlayfairDisplay'),),
-            actions: <Widget>[
-              IconButton(
-                icon: Image.asset('assets/image/choose.png',color: Colors.white,height: 30,),
-                onPressed: () {
-                  setState(() {
-                    modelChoiceActive = !modelChoiceActive;
-                  });
-                },
-              ),
-            ]),
-        body:  Stack(children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 30),
-                child:  SizedBox(
-                    height: MediaQuery
-                        .of(context)
-                        .size
-                        .height * .67,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(22),
-                        child: ARView(
-                          onARViewCreated: onARViewCreated,
-                          planeDetectionConfig: PlaneDetectionConfig.horizontal,),
-
-                    ),
-                ),
+      backgroundColor: grey300,
+      appBar: AppBar(
+          backgroundColor:  marrone,
+          centerTitle: true,
+          title: const Text('Cattura',style: TextStyle(color: white,fontWeight: FontWeight.bold,fontSize: 20),),
+          actions: <Widget>[
+            IconButton(
+              icon: Image.asset('assets/image/choose.png',color: Colors.white,height: 30,),
+              onPressed: () {
+                setState(() {
+                  modelChoiceActive = !modelChoiceActive;
+                });
+              },
             ),
-                    Positioned(
-                    top: MediaQuery.of(context).size.height*0.70,
-                    child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                          child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                          Icon(Icons.directions_walk,color: vicino ? green: red,size: 15,),
-                          const SizedBox(width: 2,),
-                          Text('${meter.toStringAsFixed(2)} m',style: TextStyle(color: vicino ? green: red,fontSize: 10,fontWeight: FontWeight.w700),),],),),),
-                    Positioned(
-                    top: MediaQuery.of(context).size.height*0.73,
-                    left: MediaQuery.of(context).size.width*0.17,
-                    child: Row(mainAxisAlignment: MainAxisAlignment.center,
-                      children:  [
-                      Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: grey300,),
-                      child:  Column(
+          ]),
+      body:  Stack(children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 30),
+          child:  SizedBox(
+            height: MediaQuery
+                .of(context)
+                .size
+                .height * .67,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(22),
+              child: ARView(
+                onARViewCreated: onARViewCreated,
+                planeDetectionConfig: PlaneDetectionConfig.horizontal,),
+
+            ),
+          ),
+        ),
+        Positioned(
+          top: MediaQuery.of(context).size.height*0.70,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(Icons.directions_walk,color: vicino ? green: red,size: 15,),
+                const SizedBox(width: 2,),
+                Text('${meter.toStringAsFixed(2)} m',style: TextStyle(color: vicino ? green: red,fontSize: 10,fontWeight: FontWeight.w700),),],),),),
+        Positioned(
+          top: MediaQuery.of(context).size.height*0.73,
+          left: MediaQuery.of(context).size.width*0.17,
+          child: Row(mainAxisAlignment: MainAxisAlignment.center,
+            children:  [
+              Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: grey300,),
+                child:  Column(
+                  children: [
+                    Image.asset('assets/image/location.png',height: 30,color: vicino ? green: red,),
+                    const SizedBox(height: 5,),
+                    Text('Coordinate',style: TextStyle(color: vicino ? green: red,fontSize: 10,fontWeight: FontWeight.w700),),
+                  ],),),
+              const SizedBox(width: 10),
+              Visibility(
+                visible: !readyToDownload,
+                child: GestureDetector(onTap: () {
+                  calculateDistance();
+                },
+                  child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: grey300),
+                    child:  Column(
                       children: [
-                        Image.asset('assets/image/location.png',height: 30,color: vicino ? green: red,),
+                        Image.asset('assets/image/icon_cattura.png',height: 30,),
                         const SizedBox(height: 5,),
-                        Text('Coordinate',style: TextStyle(color: vicino ? green: red,fontSize: 10,fontWeight: FontWeight.w700,fontFamily: 'PlayfairDisplay'),),
-                    ],),),
-                    const SizedBox(width: 10),
-                    Visibility(
-                      visible: !readyToDownload,
-                      child: GestureDetector(onTap: () {
-                        calculateDistance();
-                      },
-                      child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: grey300),
-                      child:  Column(
-                      children: [
-                          Image.asset('assets/image/icon_cattura.png',height: 30,),
-                          const SizedBox(height: 5,),
-                          Text('Cattura',style: TextStyle(color: black54,fontSize: 10,fontWeight: FontWeight.w700,fontFamily: 'PlayfairDisplay'),),
+                        Text('Cattura',style: TextStyle(color: black54,fontSize: 10,fontWeight: FontWeight.w700),),
                       ],
-                      ),),),
-                    ),
-                        const SizedBox(width: 10,),
-                        Visibility(
-                          visible: readyToDownload,
-                          child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: grey300),
-                            child:  Column(
-                              children: [
-                                IconButton(onPressed: onDownloadButtonPressed, icon:  Image.asset('assets/image/download.png',height: 30,color: vicino ? green: red,)),
-                                Text('Download',style: TextStyle(color: vicino ? green: red,fontSize: 10,fontWeight: FontWeight.w700,fontFamily: 'PlayfairDisplay'),),
-                              ],
-                            ),),
-                        ),
-                    const SizedBox(width: 10),
-                    GestureDetector(onTap: () {onRemoveEverything();},
-                        child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: grey300),
-                        child:  Column(
-                        children: [
-                        Image.asset('assets/image/icon_cestino.png',height: 30,color: black54,),
-                        const SizedBox(height: 5,),
-                        Text('Cestino',style: TextStyle(color: black54,fontSize: 10,fontWeight: FontWeight.w700,fontFamily: 'PlayfairDisplay'),),
-                        ],
-                        ),),),
-                        ],
-                    ),
-                    ),
-                    Positioned(
-                        top: MediaQuery.of(context).size.height*0.82,
-                        left: MediaQuery.of(context).size.width*0.10,
-                        child:  Visibility(
-                          visible: !readyToDownload,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text('Download \n in corso: ',style: TextStyle(color: black54,fontWeight: FontWeight.w300,fontFamily: 'PlayfairDisplay',fontSize: 11),),
-                              const SizedBox(width: 5,),
-                              const progressBar(),
-                            ],
-                          ),
-
-                    )),
-
-                    Align(
-                    alignment: FractionalOffset.topCenter,
-                    child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    ),),),
+              ),
+              const SizedBox(width: 10,),
+              Visibility(
+                visible: readyToDownload,
+                child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: grey300),
+                  child:  Column(
                     children: [
-                    Visibility(
-                        visible: readyToUpload,
-                        child: ElevatedButton(
+                      IconButton(onPressed: onDownloadButtonPressed, icon:  Image.asset('assets/image/download.png',height: 30,color: vicino ? green: red,)),
+                      Text('Download',style: TextStyle(color: vicino ? green: red,fontSize: 10,fontWeight: FontWeight.w700),),
+                    ],
+                  ),),
+              ),
+              const SizedBox(width: 10),
+              GestureDetector(onTap: () {onRemoveEverything();},
+                child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: grey300),
+                  child:  Column(
+                    children: [
+                      Image.asset('assets/image/icon_cestino.png',height: 30,color: black54,),
+                      const SizedBox(height: 5,),
+                      Text('Cestino',style: TextStyle(color: black54,fontSize: 10,fontWeight: FontWeight.w700),),
+                    ],
+                  ),),),
+            ],
+          ),
+        ),
+        Positioned(
+            top: MediaQuery.of(context).size.height*0.82,
+            left: MediaQuery.of(context).size.width*0.10,
+            child:  Visibility(
+              visible: !readyToDownload,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text('Download \n in corso: ',style: TextStyle(color: black54,fontWeight: FontWeight.w300),),
+                  const SizedBox(width: 5,),
+                  const progressBar(),
+                ],
+              ),
+
+            )),
+
+        Align(
+          alignment: FractionalOffset.topCenter,
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Visibility(
+                    visible: readyToUpload,
+                    child: ElevatedButton(
                         onPressed: onUploadButtonPressed,
                         child: Text("Upload"))),
-                    ]),
-                    ),
-                    Align(
-                    alignment: FractionalOffset.centerLeft,
-                      child: Visibility(
-                        visible: modelChoiceActive,
-                          child: ModelSelectionWidget(
-                          onTap: onModelSelected,
-                          firebaseManager: this.firebaseManager)))
-                    ]),
-        );
+              ]),
+        ),
+        Align(
+            alignment: FractionalOffset.centerLeft,
+            child: Visibility(
+                visible: modelChoiceActive,
+                child: ModelSelectionWidget(
+                    onTap: onModelSelected,
+                    firebaseManager: this.firebaseManager)))
+      ]),
+    );
   }
 
 
@@ -297,7 +299,7 @@ class _ArFossilState extends State<ArFossil> {
       showFeaturePoints: false,
       showPlanes: true,
       customPlaneTexturePath: "assets/image/triangle.png",
-      showWorldOrigin: false,
+      showWorldOrigin: true,
       showAnimatedGuide: false,
     );
     this.arObjectManager!.onInitialize();
@@ -319,10 +321,10 @@ class _ArFossilState extends State<ArFossil> {
             showAlertDialog(
                 context,
                 "Action Required",
-                "Per usa le funzionalità di cloud anchor,per favore abilita i servizi di geolocalizzazione",
-                "Impostazioni",
+                "To use cloud anchor functionality, please enable your location services",
+                "Settings",
                 this.arLocationManager!.openLocationServicesSettings,
-                "Cancella");
+                "Cancel");
             break;
           }
 
@@ -331,10 +333,10 @@ class _ArFossilState extends State<ArFossil> {
             showAlertDialog(
                 context,
                 "Action Required",
-                "Per usa le funzionalità di cloud anchor, aiuta l'applicazione ad accedere alla tua posizione corrente",
-                "Riprova",
+                "To use cloud anchor functionality, please allow the app to access your device's location",
+                "Retry",
                 this.arLocationManager!.startLocationUpdates,
-                "Cancella");
+                "Cancel");
             break;
           }
 
@@ -343,10 +345,10 @@ class _ArFossilState extends State<ArFossil> {
             showAlertDialog(
                 context,
                 "Action Required",
-                "Per usa le funzionalità di cloud anchor, aiuta l'applicazione ad accedere alla tua posizione corrente",
-                "Impostazioni",
+                "To use cloud anchor functionality, please allow the app to access your device's location",
+                "Settings",
                 this.arLocationManager!.openAppPermissionSettings,
-                "Cancella");
+                "Cancel");
             break;
           }
 
@@ -362,7 +364,7 @@ class _ArFossilState extends State<ArFossil> {
 
   void onModelSelected(AvailableModel model) {
     this.selectedModel = model;
-    this.arSessionManager!.onError("Selezionato "+ model.name);
+    this.arSessionManager!.onError(model.name + " selected");
     setState(() {
       modelChoiceActive = false;
     });
@@ -408,7 +410,7 @@ class _ArFossilState extends State<ArFossil> {
             scale: VectorMath.Vector3(0.2, 0.2, 0.2),
             position: VectorMath.Vector3(0.0, 0.0, 0.0),
             rotation: VectorMath.Vector4(1.0, 0.0, 0.0, 0.0),
-            data: {"onTapText": "Sono " + this.selectedModel.name});
+            data: {"onTapText": "I am a " + this.selectedModel.name});
         bool? didAddNodeToAnchor =
         await this.arObjectManager!.addNode(newNode, planeAnchor: newAnchor);
         if (didAddNodeToAnchor!) {
@@ -417,10 +419,10 @@ class _ArFossilState extends State<ArFossil> {
             readyToUpload = true;
           });
         } else {
-          this.arSessionManager!.onError("Aggiunta Node all' Anchor fallita");
+          this.arSessionManager!.onError("Adding Node to Anchor failed");
         }
       } else {
-        this.arSessionManager!.onError("Aggiunta Anchor fallita");
+        this.arSessionManager!.onError("Adding Anchor failed");
       }
     }
   }
@@ -461,7 +463,7 @@ class _ArFossilState extends State<ArFossil> {
         this.nodes.add(object);
       });
     });
-
+    this.arSessionManager!.onError("Download avvenuto con successo");
     return anchor;
   }
 
@@ -486,7 +488,7 @@ class _ArFossilState extends State<ArFossil> {
     } else {
       this
           .arSessionManager!
-          .onError("Location aggiornata non correre, non possiamo fare il download dell'anchor");
+          .onError("Location updates not running, can't download anchors");
     }
   }
   calculateDistance() {
