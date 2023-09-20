@@ -22,6 +22,7 @@ class _SplashState extends State<Splash> {
   final viewModel = AuthViewModel();
   var utente_loggato = false;
 
+
   @override
   void initState() {
     super.initState();
@@ -40,7 +41,7 @@ class _SplashState extends State<Splash> {
       viewModel.password = user.password!;
       viewModel.signInWithEmailAndPassword(false);
     }
-    if(!utente_loggato){Get.offAll(LoginView());}
+    if(!utente_loggato){Get.offAll(() => const LoginView());}
   }
   void initializeLocationAndSave() async {
     // Ensure all permissions are collected for Locations
@@ -67,7 +68,7 @@ class _SplashState extends State<Splash> {
     sharedPreferences.setDouble('longitude', locationData.longitude!);
 
     // Get and store the directions API response in sharedPreferences
-    for (int i = 0; i < fossili.length; i++) {
+    for (int i = 0; i < ammoniti.length; i++) {
       Map modifiedResponse = await getDirectionsAPIResponse(currentLatLng, i);
       saveDirectionsAPIResponse(i, json.encode(modifiedResponse));
     }
@@ -92,7 +93,13 @@ class _SplashState extends State<Splash> {
               child: Image.asset('assets/image/logo.png', height: 35, width: 35,),),
             const SpinKitCircle(color: Color.fromRGBO(210, 180, 140, 1), size: 50.0,),
             const SizedBox(height: 20,),
-            Center(child: Text('Inizia ora la tua avventura!',style: TextStyle(color: black54,fontSize: 25 ,fontFamily: 'PlayfairDisplay',fontWeight: FontWeight.w300),),),
+            Center(child: Text('INIZIA LA TUA AVVENTURA!',style:  TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w300,
+                color: black54,
+                letterSpacing: 5,
+                fontFamily: 'PlayfairDisplay'
+            ),),),
           ],
         ),
       ),

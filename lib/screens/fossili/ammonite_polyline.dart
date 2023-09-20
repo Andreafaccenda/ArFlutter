@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -9,20 +8,22 @@ import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import '../../helpers/shared_prefs.dart';
 import '../../main.dart';
-import '../../model/fossil.dart';
+import '../../model/ammonite.dart';
 import '../../widgets/costanti.dart';
-import '../ar_flutter/guideToCatchFossil.dart';
+import '../ar_flutter/ammonite_ar_guide.dart';
 const MAPBOX_ACCESS_TOKEN='pk.eyJ1IjoiZmFjYzAwIiwiYSI6ImNsam9kc3kzbDFtcHMzZXBqdWQ2YjNzeDcifQ.koA0RgNUY0hLmiOT6W1yqg';
 
-class FossilPolyline extends StatefulWidget {
-  FossilModel model;
-  FossilPolyline({super.key, required this.model});
+class AmmonitePolyline extends StatefulWidget {
+  Ammonite model;
+  AmmonitePolyline({super.key, required this.model});
 
   @override
-  State<FossilPolyline> createState() => _FossilPolylineState();
+  State<AmmonitePolyline> createState() => _AmmonitePolylineState();
 }
 
-class _FossilPolylineState extends State<FossilPolyline> {
+class _AmmonitePolylineState extends State<AmmonitePolyline> {
+
+  late Position currentPosition ;
   late num distance;
   late num duration;
   late FollowOnLocationUpdate _followOnLocationUpdate;
@@ -42,15 +43,17 @@ class _FossilPolylineState extends State<FossilPolyline> {
   @override
   void initState() {
     super.initState();
-
     Geolocator.getPositionStream(locationSettings: locationSettings)
         .listen((Position? position) async {
+          setState(() {
+            currentPosition=position!;
+          });
           points.clear();
       points.add(LatLng(double.parse(position!.latitude.toString()), double.parse(position.longitude.toString())));
-      points.add(LatLng(double.parse(widget.model.latitudine.toString()), double.parse(widget.model.longitudine.toString())));
+      points.add(LatLng(double.parse(widget.model.lat.toString()), double.parse(widget.model.long.toString())));
     });
     // Calculate the distance and time from data in SharedPreferences
-    for (int index = 0; index < fossili.length; index++) {
+    for (int index = 0; index < ammoniti.length; index++) {
       String id = getIdFromSharedPrefs(index);
       if (widget.model.id == id) {
         distance = getDistanceFromSharedPrefs(index) / 1000;
@@ -68,6 +71,7 @@ class _FossilPolylineState extends State<FossilPolyline> {
     super.dispose();
   }
 
+
   Widget carouselCard() {
     return Container(
       height: MediaQuery.of(context).size.height * 0.18,
@@ -83,8 +87,8 @@ class _FossilPolylineState extends State<FossilPolyline> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(decoration: BoxDecoration(border: Border.all(color: marrone!),shape: BoxShape.circle),
-              child: CircleAvatar(
-                backgroundImage: NetworkImage(widget.model.immagine.toString()),
+              child: const CircleAvatar(
+                backgroundImage:  AssetImage('assets/image/ammonite.gif'),
                 radius: 25,
               ),
             ),
@@ -164,7 +168,7 @@ class _FossilPolylineState extends State<FossilPolyline> {
         ),
         MarkerLayer(
           markers: [
-            Marker(point: LatLng(double.parse(widget.model.latitudine.toString()),double.parse(widget.model.longitudine.toString())), builder: (context){
+            Marker(point: LatLng(double.parse(widget.model.lat.toString()),double.parse(widget.model.long.toString())), builder: (context){
               return Image.asset('assets/icon/icon_fossil.png',scale: 1);
             })
           ],
@@ -215,17 +219,9 @@ class _FossilPolylineState extends State<FossilPolyline> {
           FloatingActionButton(
               heroTag:'fab1',
               onPressed: (){
-                Get.to(GuideToCatchFossil(model: widget.model));
+                Get.to(() => ArGuide(model: widget.model));
               },backgroundColor: marrone,
               child:  Image.asset('assets/image/icon_cattura.png',height: 30,)
-          ),
-          const SizedBox(height: 10,),
-          FloatingActionButton(
-              heroTag: 'default FloatingActionButton tag',
-              onPressed: (){},
-              //Get.to( NavigationFossils(model: widget.model));
-              backgroundColor: marrone,
-              child:  Image.asset('assets/image/icon_navigazione.png',height: 30,)
           ),
         ],),
     );

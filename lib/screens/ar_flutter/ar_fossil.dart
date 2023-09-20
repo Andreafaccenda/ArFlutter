@@ -1,6 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
-
+import 'dart:ui';
 import 'package:ar/widgets/progressBar.dart';
 import 'package:ar_flutter_plugin/managers/ar_location_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
@@ -15,20 +14,21 @@ import 'package:ar_flutter_plugin/datatypes/node_types.dart';
 import 'package:ar_flutter_plugin/datatypes/hittest_result_types.dart';
 import 'package:ar_flutter_plugin/models/ar_node.dart';
 import 'package:ar_flutter_plugin/models/ar_hittest_result.dart';
+import 'package:flutter_mapbox_navigation/flutter_mapbox_navigation.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:vector_math/vector_math_64.dart' as VectorMath;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
-import '../../model/fossil.dart';
+import '../../model/ammonite.dart';
 import '../../model/user_model.dart';
 import '../../widgets/costanti.dart';
 import '../../widgets/custom_dialog.dart';
 import '../auth/auth_view_model.dart';
 
 class ArFossil extends StatefulWidget {
-  FossilModel model;
+  Ammonite model;
   ArFossil({Key? key,required this.model}) : super(key: key);
   @override
   _ArFossilState createState() =>
@@ -48,11 +48,21 @@ class _ArFossilState extends State<ArFossil> {
   final viewModel = AuthViewModel();
   bool catturato = false;
   ARLocationManager? arLocationManager;
-  double meter = 0.00;
+  double distanceInMeters = 0.00;
   Distance distance = const Distance();
   List<ARNode> nodes = [];
   List<ARAnchor> anchors = [];
+  late  Position currentPosition;
   String lastUploadedAnchor = "";
+  bool _isMultipleStop = false;
+  double? _distanceRemaining, _durationRemaining;
+  MapBoxNavigationViewController? _controller;
+  bool _routeBuilt = false;
+  bool _isNavigating = false;
+  bool _inFreeDrive = false;
+  String? _instruction;
+  late MapBoxOptions _options;
+  late MapBoxOptions _navigationOption;
   late   StreamSubscription _getPositionSubscription;
   AvailableModel selectedModel = AvailableModel(
       "Duck",
@@ -62,6 +72,7 @@ class _ArFossilState extends State<ArFossil> {
   bool readyToDownload = true;
   bool modelChoiceActive = false;
   bool vicino = false;
+
 
   final LocationSettings locationSettings =  const LocationSettings(
     accuracy: LocationAccuracy.high,
@@ -74,6 +85,7 @@ class _ArFossilState extends State<ArFossil> {
       _initialized = value;
       _error = !value;
     }));
+    initialize();
     _getUser();
     _isFossilNearly();
     super.initState();
@@ -82,8 +94,36 @@ class _ArFossilState extends State<ArFossil> {
   @override
   void dispose() {
     arSessionManager!.dispose();
-    _getPositionSubscription?.cancel();
+    _getPositionSubscription.cancel();
+    _controller?.dispose();
     super.dispose();
+
+  }
+  Future<void> initialize() async {
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+    _options =  MapBoxOptions(
+      mode: MapBoxNavigationMode.drivingWithTraffic,
+      simulateRoute: false,
+      language: 'it',
+      allowsUTurnAtWayPoints: true,
+      units: VoiceUnits.metric,
+      bannerInstructionsEnabled: true,
+      voiceInstructionsEnabled: true,
+      animateBuildRoute: true,
+      tilt: 0.0,
+      bearing: 0.0,
+      enableRefresh: false,
+      alternatives: false,
+    );
+    _navigationOption = MapBoxNavigation.instance.getDefaultOptions();
+    _navigationOption.simulateRoute = true;
+    //_navigationOption.initialLatitude = 36.1175275;
+    //_navigationOption.initialLongitude = -115.1839524;
+    MapBoxNavigation.instance.registerRouteEventListener(_onEmbeddedRouteEvent);
+    MapBoxNavigation.instance.setDefaultOptions(_navigationOption);
 
   }
   _getUser()async{
@@ -101,14 +141,16 @@ class _ArFossilState extends State<ArFossil> {
   _isFossilNearly(){
     _getPositionSubscription  = Geolocator.getPositionStream(locationSettings: locationSettings)
         .listen((Position? position) async {
-      setState(() {
-        meter = distance.as(
-            LengthUnit.Meter,
-            LatLng(position!.latitude, position!.longitude),LatLng(double.parse(widget.model.latitudine.toString()),double.parse(widget.model.longitudine.toString())));
+      setState(() async {
+        currentPosition=position!;
+        distanceInMeters = Geolocator.distanceBetween(position.latitude, position.longitude,double.parse(widget.model.lat.toString()), double.parse(widget.model.long.toString()));
       });
-      if (meter <= 5.00) {
+      if (distanceInMeters <= 5.00) {
         setState(() {
           vicino = true;
+          while(readyToDownload){
+            onDownloadButtonPressed();
+          }
         });
       }else{
         setState(() {
@@ -116,6 +158,51 @@ class _ArFossilState extends State<ArFossil> {
         });
       }
     });
+  }
+  Future<void> _onEmbeddedRouteEvent(e) async {
+    _distanceRemaining = await MapBoxNavigation.instance.getDistanceRemaining();
+    _durationRemaining = await MapBoxNavigation.instance.getDurationRemaining();
+
+    switch (e.eventType) {
+      case MapBoxEvent.progress_change:
+        var progressEvent = e.data as RouteProgressEvent;
+        if (progressEvent.currentStepInstruction != null) {
+          _instruction = progressEvent.currentStepInstruction;
+        }
+        break;
+      case MapBoxEvent.route_building:
+      case MapBoxEvent.route_built:
+        setState(() {
+          _routeBuilt = true;
+        });
+        break;
+      case MapBoxEvent.route_build_failed:
+        setState(() {
+          _routeBuilt = false;
+        });
+        break;
+      case MapBoxEvent.navigation_running:
+        setState(() {
+          _isNavigating = true;
+        });
+        break;
+      case MapBoxEvent.on_arrival:
+        if (!_isMultipleStop) {
+          await Future.delayed(const Duration(seconds: 3));
+          await _controller?.finishNavigation();
+        } else {}
+        break;
+      case MapBoxEvent.navigation_finished:
+      case MapBoxEvent.navigation_cancelled:
+        setState(() {
+          _routeBuilt = false;
+          _isNavigating = false;
+        });
+        break;
+      default:
+        break;
+    }
+    setState(() {});
   }
 
   @override
@@ -156,7 +243,7 @@ class _ArFossilState extends State<ArFossil> {
       appBar: AppBar(
           backgroundColor:  marrone,
           centerTitle: true,
-          title: const Text('Cattura',style: TextStyle(color: white,fontWeight: FontWeight.bold,fontSize: 20),),
+          title:  Text('CATTURA',style: defaultTextStyle,),
           actions: <Widget>[
             IconButton(
               icon: Image.asset('assets/image/choose.png',color: Colors.white,height: 30,),
@@ -193,23 +280,20 @@ class _ArFossilState extends State<ArFossil> {
               children: [
                 Icon(Icons.directions_walk,color: vicino ? green: red,size: 15,),
                 const SizedBox(width: 2,),
-                Text('${meter.toStringAsFixed(2)} m',style: TextStyle(color: vicino ? green: red,fontSize: 10,fontWeight: FontWeight.w700),),],),),),
+                Text('${distanceInMeters.toStringAsFixed(2)} m',style: TextStyle(fontFamily: 'PlayfairDisplay',color: vicino ? green: red,fontSize: 10,fontWeight: FontWeight.w700),),],),),),
         Positioned(
-          top: MediaQuery.of(context).size.height*0.73,
-          left: MediaQuery.of(context).size.width*0.17,
+          top: MediaQuery.of(context).size.height*0.74,
+          left: MediaQuery.of(context).size.width*0.08,
           child: Row(mainAxisAlignment: MainAxisAlignment.center,
             children:  [
-              Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: grey300,),
+              Container(padding: const EdgeInsets.all(9), decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: grey300,),
                 child:  Column(
                   children: [
                     Image.asset('assets/image/location.png',height: 30,color: vicino ? green: red,),
                     const SizedBox(height: 5,),
-                    Text('Coordinate',style: TextStyle(color: vicino ? green: red,fontSize: 10,fontWeight: FontWeight.w700),),
+                    Text('Coordinate',style: TextStyle(color: vicino ? green: red,fontSize: 10,letterSpacing: 2,fontFamily: 'PlayfairDisplay',fontWeight: FontWeight.w700),),
                   ],),),
-              const SizedBox(width: 10),
-              Visibility(
-                visible: !readyToDownload,
-                child: GestureDetector(onTap: () {
+              GestureDetector(onTap: () {
                   calculateDistance();
                 },
                   child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: grey300),
@@ -217,43 +301,52 @@ class _ArFossilState extends State<ArFossil> {
                       children: [
                         Image.asset('assets/image/icon_cattura.png',height: 30,),
                         const SizedBox(height: 5,),
-                        Text('Cattura',style: TextStyle(color: black54,fontSize: 10,fontWeight: FontWeight.w700),),
+                        Text('Cattura',style: TextStyle(color: black54,fontSize: 10,fontFamily: 'PlayfairDisplay',letterSpacing: 2,fontWeight: FontWeight.w700),),
                       ],
-                    ),),),
+                    ),),
               ),
-              const SizedBox(width: 10,),
-              Visibility(
-                visible: readyToDownload,
+              GestureDetector(onTap: () async {
+                var wayPoints = <WayPoint>[];
+                final partenza = WayPoint(name: 'partenza', latitude: currentPosition.latitude, longitude: currentPosition.longitude);
+                final destination = WayPoint(name: 'destination', latitude: double.parse(widget.model.lat.toString()), longitude:double.parse( widget.model.long.toString()));
+                wayPoints.add(partenza);
+                wayPoints.add(destination);
+                
+
+                await MapBoxNavigation.instance
+                    .startNavigation(wayPoints: wayPoints,options: _options);
+              },
                 child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: grey300),
                   child:  Column(
                     children: [
-                      IconButton(onPressed: onDownloadButtonPressed, icon:  Image.asset('assets/image/download.png',height: 30,color: vicino ? green: red,)),
-                      Text('Download',style: TextStyle(color: vicino ? green: red,fontSize: 10,fontWeight: FontWeight.w700),),
+                      Image.asset('assets/image/gps_navigator.png',height: 30,),
+                      const SizedBox(height: 5,),
+                      Text('Navigatore',style: TextStyle(color: black54,fontFamily: 'PlayfairDisplay',letterSpacing: 2,fontSize: 10,fontWeight: FontWeight.w700),),
+
                     ],
-                  ),),
-              ),
-              const SizedBox(width: 10),
+                  ),),),
               GestureDetector(onTap: () {onRemoveEverything();},
                 child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: grey300),
                   child:  Column(
                     children: [
                       Image.asset('assets/image/icon_cestino.png',height: 30,color: black54,),
                       const SizedBox(height: 5,),
-                      Text('Cestino',style: TextStyle(color: black54,fontSize: 10,fontWeight: FontWeight.w700),),
+                      Text('Cestino',style: TextStyle(color: black54,fontFamily: 'PlayfairDisplay',letterSpacing: 2,fontSize: 10,fontWeight: FontWeight.w700),),
+
                     ],
                   ),),),
             ],
           ),
         ),
         Positioned(
-            top: MediaQuery.of(context).size.height*0.82,
+            top: MediaQuery.of(context).size.height*0.83,
             left: MediaQuery.of(context).size.width*0.10,
             child:  Visibility(
               visible: !readyToDownload,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text('Download \n in corso: ',style: TextStyle(color: black54,fontWeight: FontWeight.w300),),
+                  Text('Download \n in corso: ',style: TextStyle(color: black54,fontWeight: FontWeight.w500,fontSize: 10),),
                   const SizedBox(width: 5,),
                   const progressBar(),
                 ],
@@ -361,6 +454,7 @@ class _ArFossilState extends State<ArFossil> {
       this.arSessionManager!.onError(error.toString());
     });
   }
+
 
   void onModelSelected(AvailableModel model) {
     this.selectedModel = model;

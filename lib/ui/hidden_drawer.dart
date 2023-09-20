@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:hidden_drawer_menu/hidden_drawer_menu.dart';
 import '../model/user_model.dart';
 import '../screens/auth/auth_view_model.dart';
-import '../screens/fossili/fossils_home.dart';
-import '../screens/fossili/fossils_list.dart';
-import '../screens/fossili/fossil_bag.dart';
-import '../widgets/progressBar.dart';
+import '../screens/fossili/home.dart';
+import '../screens/fossili/ammonite_list.dart';
+import '../screens/fossili/ammonite_backpack.dart';
 import '../widgets/costanti.dart';
 
 class HiddenDrawer extends StatefulWidget {
@@ -29,13 +28,6 @@ class _HiddenDrawerState extends State<HiddenDrawer> {
 
   }
 
-  final defaultTextStyle = const TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w300,
-    color: Colors.white,
-    letterSpacing: 5,
-    fontFamily: 'PlayfairDisplay'
-  );
   @override
   void initState() {
     super.initState();
@@ -48,7 +40,7 @@ class _HiddenDrawerState extends State<HiddenDrawer> {
           selectedStyle: defaultTextStyle,
           colorLineSelected: Colors.black54,
         ),
-        const FossilHome(),
+        const Home(),
       ),
       ScreenHiddenDrawer(
         ItemHiddenMenu(
@@ -57,7 +49,7 @@ class _HiddenDrawerState extends State<HiddenDrawer> {
           selectedStyle: defaultTextStyle,
           colorLineSelected: Colors.black54,
         ),
-        const FossilsList(),
+        const AmmoniteList(),
       ),
       ScreenHiddenDrawer(
         ItemHiddenMenu(
@@ -66,7 +58,7 @@ class _HiddenDrawerState extends State<HiddenDrawer> {
           selectedStyle: defaultTextStyle,
           colorLineSelected: Colors.black54,
         ),
-          const FossilBag(),
+          const AmmoniteBackpack(),
       ),
 
       ScreenHiddenDrawer(
@@ -80,7 +72,7 @@ class _HiddenDrawerState extends State<HiddenDrawer> {
           selectedStyle: defaultTextStyle,
           colorLineSelected: Colors.black54,
         ),
-        const FossilHome(),
+        const Home(),
       ),
       ScreenHiddenDrawer(
         ItemHiddenMenu(

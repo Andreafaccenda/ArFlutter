@@ -17,8 +17,12 @@ class AmmoniteService {
   }
   Future<void> addAmmonite(Ammonite ammonite) async {
     await  _ammoniteCollectionRef
-        .doc()
+        .doc(ammonite.id)
         .set(ammonite.toJson());
+
+  }
+  Future<void> updateAmmonite(Ammonite ammonite) async {
+    await _db.collection("ammonite").doc(ammonite.id).update(ammonite.toJson());
 
   }
 

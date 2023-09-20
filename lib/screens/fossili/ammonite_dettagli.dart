@@ -2,22 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import '../../model/fossil.dart';
+import '../../model/ammonite.dart';
 import '../../widgets/costanti.dart';
-import 'fossil_view_model.dart';
 
 const MAPBOX_ACCESS_TOKEN='pk.eyJ1IjoiZmFjYzAwIiwiYSI6ImNsam9kc3kzbDFtcHMzZXBqdWQ2YjNzeDcifQ.koA0RgNUY0hLmiOT6W1yqg';
 
-class DettagliFossile extends StatefulWidget {
-  FossilModel model;
-  DettagliFossile({super.key, required this.model});
+class DettagliAmmonite extends StatefulWidget {
+  Ammonite model;
+  DettagliAmmonite({super.key, required this.model});
 
   @override
-  State<DettagliFossile> createState() => _DettagliFossileState();
+  State<DettagliAmmonite> createState() => _DettagliAmmoniteState();
 }
 
-class _DettagliFossileState extends State<DettagliFossile> {
-  final viewModel = FossilViewModel();
+class _DettagliAmmoniteState extends State<DettagliAmmonite> {
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +40,7 @@ class _DettagliFossileState extends State<DettagliFossile> {
   Widget flutterMap(){
     return FlutterMap(
       options: MapOptions(
-        center:  LatLng(double.parse(widget.model.latitudine.toString()),double.parse(widget.model.longitudine.toString())),
+        center:  LatLng(double.parse(widget.model.lat.toString()),double.parse(widget.model.long.toString())),
         zoom: 15,
         minZoom: 5,
         maxZoom: 20,
@@ -60,7 +58,7 @@ class _DettagliFossileState extends State<DettagliFossile> {
         ),
         MarkerLayer(
           markers: [
-            Marker(point: LatLng(double.parse(widget.model.latitudine.toString()),double.parse(widget.model.longitudine.toString())), builder: (context){
+            Marker(point: LatLng(double.parse(widget.model.lat.toString()),double.parse(widget.model.long.toString())), builder: (context){
               return Image.asset('assets/icon/icon_fossil.png',scale: 0.4);
             })
           ],
@@ -98,31 +96,46 @@ class _DettagliFossileState extends State<DettagliFossile> {
                           height: 5,
                           width: 35,
                           color: Colors.black12,),],),),
-                  Text(widget.model.nome.toString(), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: white,),),
-                  const SizedBox(height: 15,),
-                   Text('Rarità:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900,
-                    color: black54,),),
-                  SizedBox(height: 10, width: width, child: ListView.builder(itemCount: 5, scrollDirection: Axis.horizontal, itemBuilder: (context,int key){return  const Icon(Icons.star, color: Colors.white, size: 16,);},),),
-                  const SizedBox(height: 15,),
+                   Text(widget.model.nome.toString(), style: const TextStyle(fontSize: 18,fontFamily: 'PlayfairDisplay', fontWeight: FontWeight.bold, color: white,),),
+                  const SizedBox(height: 5,),
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 10),
-                    child: Divider(height: 4,),),
-                  Text("Descrizione:",style: TextStyle(color: black54,fontSize: 16,fontWeight: FontWeight.w900),),
+                    child: Divider(height: 4,color: white,),),
+                  Text("Periodo storico:",style: TextStyle(color: black54,fontSize: 16,fontFamily: 'PlayfairDisplay',fontWeight: FontWeight.w900),),
                   const SizedBox(height: 2,),
-                  Text(widget.model.descrizione.toString(),style: const TextStyle(color: white,fontWeight: FontWeight.normal,letterSpacing: 0.5,wordSpacing: 1.5),),
+                  Text(widget.model.periodo.toString(),style: const TextStyle(color: white,fontFamily: 'PlayfairDisplay',fontWeight: FontWeight.normal,letterSpacing: 0.5,wordSpacing: 1.5),),
+                  const SizedBox(height: 5,),
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 10),
-                    child: Divider(height: 4,),),
-                  const SizedBox(height: 15,),
+                    child: Divider(height: 4,color: white,),),
+                  Text("Descrizione:",style: TextStyle(color: black54,fontSize: 16,fontFamily: 'PlayfairDisplay',fontWeight: FontWeight.w900),),
+                  const SizedBox(height: 2,),
+                  Text(widget.model.descrAmmonite.toString(),style: const TextStyle(color: white,fontFamily: 'PlayfairDisplay',fontWeight: FontWeight.normal,letterSpacing: 0.5,wordSpacing: 1.5),),
+                  const SizedBox(height: 5,),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    child: Divider(height: 4,color: white,),),
+                  Text("Roccia:",style: TextStyle(color: black54,fontSize: 16,fontFamily: 'PlayfairDisplay',fontWeight: FontWeight.w900),),
+                  const SizedBox(height: 2,),
+                  Text(widget.model.roccia.toString(),style: const TextStyle(color: white,fontFamily: 'PlayfairDisplay',fontWeight: FontWeight.normal,letterSpacing: 0.5,wordSpacing: 1.5),),
+                  const SizedBox(height: 5,),
+                  Text(widget.model.descrRoccia.toString(),style: const TextStyle(color: white,fontFamily: 'PlayfairDisplay',fontWeight: FontWeight.normal,letterSpacing: 0.5,wordSpacing: 1.5),),
+                  const SizedBox(height: 5,),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    child: Divider(height: 4,color: white,),),
                   Text("Posizione:",style: TextStyle(color: black54,fontSize: 16,fontWeight: FontWeight.w900),),
                   const SizedBox(height: 2,),
                   Text(' ${widget.model.indirizzo.toString()}',style: const TextStyle(color: white,fontWeight: FontWeight.normal,letterSpacing: 0.5,wordSpacing: 1.5),),
+                  const SizedBox(height: 2,),
+                  Text(' ${widget.model.zona.toString()}',style: const TextStyle(color: white,fontWeight: FontWeight.normal,letterSpacing: 0.5,wordSpacing: 1.5),),
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 5),
                     child: Divider(height: 4,),),
                   SizedBox(
                     height: MediaQuery.of(context).size.height*0.45,
                     child: flutterMap(),),
+                  const SizedBox(height: 20,),
                 ],
               ),
             ),

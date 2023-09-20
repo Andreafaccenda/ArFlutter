@@ -34,7 +34,7 @@ class AuthViewModel extends GetxController{
       colorText: Colors.black,
       snackPosition: SnackPosition.BOTTOM,
     );
-    Get.offAll(const HiddenDrawer());
+    Get.offAll(() => const HiddenDrawer());
   }
 
   Future<void> signInWithEmailAndPassword(bool store) async {
@@ -46,7 +46,7 @@ class AuthViewModel extends GetxController{
         var user = getUserFromEmail(email);
         if (user != null) {
           storeSession(user);
-        Get.offAll(const HiddenDrawer());
+        Get.offAll(() => const HiddenDrawer());
         }
       } else {
         await _auth.signInWithEmailAndPassword(
@@ -56,7 +56,7 @@ class AuthViewModel extends GetxController{
           colorText: Colors.black,
           snackPosition: SnackPosition.BOTTOM,
         );
-        Get.offAll(const HiddenDrawer());
+        Get.offAll(() => const HiddenDrawer());
 
       }
 
@@ -81,7 +81,7 @@ class AuthViewModel extends GetxController{
         );
       });
 
-      Get.offAll(LoginView());
+      Get.offAll(() => const LoginView());
     } catch (e) {
       Get.snackbar('Errore creazione account',
         e.toString(),

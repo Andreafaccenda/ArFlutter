@@ -1,4 +1,5 @@
-import 'package:ar/screens/ammonite_view_model.dart';
+import 'package:ar/main.dart';
+import 'package:ar/screens/fossili/ammonite_view_model.dart';
 import 'package:flutter/material.dart';
 
 import '../model/ammonite.dart';
@@ -22,7 +23,7 @@ class _AmmoniteFirebaseState extends State<AmmoniteFirebase> {
 
   final viewmodel = AmmoniteViewModel();
    Ammonite ammonite = Ammonite(nome: "", descrAmmonite: "", foto: "", roccia: "", descrRoccia: "", zona: "",
-                                lat: "", long: "", periodo: "", indirizzo: "");
+                                lat: "", long: "", periodo: "", indirizzo: "", id: '');
   @override
   void initState() {
     controllerNome=TextEditingController();

@@ -1,34 +1,34 @@
+import 'package:ar/screens/fossili/ammonite_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../main.dart';
-import '../../model/fossil.dart';
+import '../../model/ammonite.dart';
 import '../../model/user_model.dart';
 import '../../widgets/costanti.dart';
 import '../../widgets/custom_dialog.dart';
-import 'dettagli_fossile.dart';
-import 'fossil_polyline.dart';
-import '../ar_flutter/guideToCatchFossil.dart';
+import 'ammonite_dettagli.dart';
+import 'ammonite_polyline.dart';
+import '../ar_flutter/ammonite_ar_guide.dart';
 import '../auth/auth_view_model.dart';
-import 'fossil_view_model.dart';
 
 late UserModel user;
-class FossilsList extends StatefulWidget {
-  const FossilsList({Key? key}) : super(key: key);
+class AmmoniteList extends StatefulWidget {
+  const AmmoniteList({Key? key}) : super(key: key);
 
   @override
-  State<FossilsList> createState() => _FossilsListState();
+  State<AmmoniteList> createState() => _AmmoniteListState();
 }
 
-class _FossilsListState extends State<FossilsList> {
+class _AmmoniteListState extends State<AmmoniteList> {
 
-  final viewModel = FossilViewModel();
-  late List<FossilModel> lista;
+  final viewModel = AmmoniteViewModel();
+  late List<Ammonite> lista;
   final viewModelAuth = AuthViewModel();
 
   @override
   void initState(){
     super.initState();
-    lista = fossili;
+    lista = ammoniti;
   }
 
   @override
@@ -68,7 +68,7 @@ class _FossilsListState extends State<FossilsList> {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              Get.to(DettagliFossile(model: lista[index]));
+              Get.to(() => DettagliAmmonite(model: lista[index]));
             },
             child: Container(
               margin: const EdgeInsetsDirectional.fromSTEB(0, 0, 10, 20),
@@ -85,7 +85,7 @@ class _FossilsListState extends State<FossilsList> {
                       AspectRatio(aspectRatio: 1/1,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(25),
-                          child: Image.network(lista[index].immagine.toString(),
+                          child: Image.asset('assets/image/ammonite.gif',
                             fit: BoxFit.cover,),
                         ),),
                       const SizedBox(width: 10 ,),
@@ -97,13 +97,13 @@ class _FossilsListState extends State<FossilsList> {
                             Text(lista[index].nome.toString(),style:  TextStyle(color: black54,fontFamily: 'PlayfairDisplay',fontSize: 14,fontWeight: FontWeight.bold),),
                             const SizedBox(height: 2,),
                             Text("${lista[index]
-                                .descrizione}",style:  TextStyle(color: black54,fontFamily: 'PlayfairDisplay',fontSize: 12,fontWeight: FontWeight.w500),),
+                                .zona}",style:  TextStyle(color: black54,fontFamily: 'PlayfairDisplay',fontSize: 12,fontWeight: FontWeight.w500),),
                             const SizedBox(height: 5,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 GestureDetector(onTap: () {
-                                  Get.to(FossilPolyline(model: lista[index]));
+                                  Get.to(() => AmmonitePolyline(model: lista[index]));
                                 },
                                   child: Container(padding: const EdgeInsets.all(5),
                                     decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: white,),
@@ -114,7 +114,7 @@ class _FossilsListState extends State<FossilsList> {
                                     ),),),
                                 const SizedBox(width: 15,),
                                 GestureDetector(onTap: () {
-                                  Get.to(GuideToCatchFossil(model: lista[index],));
+                                  Get.to(() => ArGuide(model: lista[index],));
                                 },
                                   child: Container(padding: const EdgeInsets.all(5),
                                     decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: white,),
@@ -162,8 +162,8 @@ class _FossilsListState extends State<FossilsList> {
           decoration:  InputDecoration(hintText: 'Ricerca fossili', hintStyle: TextStyle(color: black54,fontFamily: 'PlayfairDisplay',fontWeight: FontWeight.w400), border: InputBorder.none, prefixIcon: Icon(Icons.search, color:black54,),), style:  TextStyle(color:black54),),),);
     }
   void filtraLista(String text) {
-    List<FossilModel> listaCompleta = viewModel.fossilModel;
-    List<FossilModel> listaFiltrata = [];
+    List<Ammonite> listaCompleta = viewModel.ammonite;
+    List<Ammonite> listaFiltrata = [];
     for (int i = 0; i < listaCompleta.length; i++) {
       if (listaCompleta[i].nome.toString().toLowerCase().startsWith(
           text.toLowerCase())) {

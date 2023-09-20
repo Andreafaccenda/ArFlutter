@@ -1,6 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
+const defaultTextStyle =  TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w300,
+    color: Colors.white,
+    letterSpacing: 5,
+    fontFamily: 'PlayfairDisplay'
+);
 
 
 InputDecoration formDecoration(String labelText,IconData iconData) {

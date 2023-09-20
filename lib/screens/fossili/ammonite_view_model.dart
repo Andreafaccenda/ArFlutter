@@ -4,7 +4,7 @@ import 'package:ar/model/ammonite.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
-import '../repository/ammonite_repository.dart';
+import '../../repository/ammonite_repository.dart';
 
 class AmmoniteViewModel extends GetxController {
   final service = AmmoniteService();
@@ -31,5 +31,8 @@ class AmmoniteViewModel extends GetxController {
   }
   addAmmonite(Ammonite ammonite) async{
     await service.addAmmonite(ammonite);
+  }
+  updateAmmonite(Ammonite ammonite) async{
+    await service.updateAmmonite(ammonite);
   }
 }

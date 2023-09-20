@@ -71,6 +71,10 @@ dependencies:
   simple_animation_progress_bar: ^1.6.0
   google_fonts: ^4.0.4
   connectivity_plus: ^4.0.2
+  firebase_storage: ^10.3.11
+  carousel_slider: ^4.2.1
+  flutter_mapbox_navigation:
+    git: https://github.com/Andreafaccenda/flutter_mapbox_navigator
 
 
 dependency_overrides:

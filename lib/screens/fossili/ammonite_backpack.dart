@@ -1,25 +1,24 @@
-import 'package:ar/screens/fossili/dettagli_fossile.dart';
+import 'package:ar/screens/fossili/ammonite_dettagli.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../main.dart';
-import '../../model/fossil.dart';
+import '../../model/ammonite.dart';
 import '../../model/user_model.dart';
 import '../../widgets/costanti.dart';
 import '../../widgets/custom_dialog.dart';
 import '../auth/auth_view_model.dart';
 
-class FossilBag extends StatefulWidget {
-  const FossilBag({Key? key}) : super(key: key);
+class AmmoniteBackpack extends StatefulWidget {
+  const AmmoniteBackpack({Key? key}) : super(key: key);
 
   @override
-  State<FossilBag> createState() => _FossilBagState();
+  State<AmmoniteBackpack> createState() => _AmmoniteBackpackState();
 }
 
-class _FossilBagState extends State<FossilBag> {
+class _AmmoniteBackpackState extends State<AmmoniteBackpack> {
   final viewModel = AuthViewModel();
   late UserModel user;
-  List<FossilModel>? fossili_catturati;
-  bool listaVuota = false;
+  List<Ammonite> ammoniti_catturati = [];
   @override
   void initState() {
     super.initState();
@@ -27,26 +26,19 @@ class _FossilBagState extends State<FossilBag> {
   }
 
   _getUser()async{
-    List<FossilModel> lista = [];
+    List<Ammonite> lista = [];
     var prefId = await viewModel.getIdSession();
     user = (await viewModel.getUserFormId(prefId))!;
-    if(user.lista_fossili!.isEmpty){
-      setState(() {
-        listaVuota=true;
-      });
-    }else{
-      setState(() {
-        listaVuota=false;
-      });
-      for(var id in user.lista_fossili ?? <String>[]) {
-        for(var fossile in fossili){
-          if(fossile.id == id){
-            lista.add(fossile);
+    if(user.lista_fossili!.isNotEmpty){
+      for(String id in user.lista_fossili ?? []) {
+        for(int i = 0;i< ammoniti.length;i++){
+          if(ammoniti[i].id == id){
+            lista.add(ammoniti[i]);
           }
         }
       }
       setState(() {
-        fossili_catturati = lista;
+        ammoniti_catturati = lista;
       });
     }
   }
@@ -68,23 +60,23 @@ class _FossilBagState extends State<FossilBag> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 10.0),
                 child: Container(decoration: BoxDecoration(border: Border.all(color: marrone!),shape: BoxShape.circle),
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(fossili_catturati![_selectedItemIndex].immagine.toString()),
+                  child: const CircleAvatar(
+                    backgroundImage:  AssetImage('assets/image/ammonite.gif'),
                     radius: 35,
                   ),
                 ),
               ),
             ),
-            Center(child: Text(fossili_catturati![_selectedItemIndex].nome.toString(),style: TextStyle(color: marrone,fontSize: 20,fontWeight: FontWeight.w700),)),
+            Center(child: Text(ammoniti_catturati[_selectedItemIndex].nome.toString(),style: TextStyle(fontFamily: 'PlayfairDisplay',color: marrone,fontSize: 20,fontWeight: FontWeight.w700),)),
             const SizedBox(height: 5,),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Image.asset('assets/image/description.png',height: 20,color: marrone,),
                 const SizedBox(width: 10,),
-                Text(fossili_catturati![_selectedItemIndex].descrizione.toString(),
+                Text("roccia: ${ammoniti_catturati[_selectedItemIndex].roccia}",
                   overflow: TextOverflow.ellipsis,style:  TextStyle(
-                      color: marrone,fontWeight: FontWeight.w500, fontSize: 12),),
+                      color: marrone,fontWeight: FontWeight.w700, fontSize: 12,fontFamily: 'PlayfairDisplay'),),
               ],
             ),
             const SizedBox(height: 6,),
@@ -93,27 +85,25 @@ class _FossilBagState extends State<FossilBag> {
               children: [
                 Image.asset('assets/image/icon_location.png',height: 20,color: marrone,),
                 const SizedBox(width: 10,),
-                Text(fossili_catturati![_selectedItemIndex].indirizzo.toString(),
+                Text(ammoniti_catturati[_selectedItemIndex].indirizzo.toString(),
                   overflow: TextOverflow.ellipsis,style:  TextStyle(
-                      color: marrone,fontWeight: FontWeight.w500, fontSize: 12),),
+                      color: marrone,fontWeight: FontWeight.w700, fontSize: 12,fontFamily: 'PlayfairDisplay'),),
               ],
             ),
             const SizedBox(height: 10,),
             GestureDetector(onTap: () {
-              Get.to(DettagliFossile(model: fossili_catturati![_selectedItemIndex]));
+              Get.to(() => DettagliAmmonite(model: ammoniti_catturati[_selectedItemIndex]));
             },
               child: Center(
                 child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: white,),
                   child:  Column(
                     children: [
-                      Image.asset('assets/image/details.png',height: 30,color:  marrone,),
-                      const SizedBox(height: 5,),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Text('Vai ai dettagli',style: TextStyle(color: marrone,fontSize: 10,fontWeight: FontWeight.w700),),
+                            Text('Vai ai dettagli',style: TextStyle(color: marrone,fontSize: 12,fontWeight: FontWeight.w700,fontFamily: 'PlayfairDisplay'),),
                             Image.asset('assets/image/arrow.png',height: 15,color: marrone,),
                           ],
                         ),
@@ -132,6 +122,10 @@ class _FossilBagState extends State<FossilBag> {
   // In the beginning, it's the index of the first item
   int _selectedItemIndex = 0;
 
+  Future<bool> showExitDialog()async {
+    return await showDialog(barrierDismissible: false,context: context, builder: (context)=>
+        customAlertDialog(context,"Vuoi uscire dall'applicazione?"),);
+  }
   Widget listWheelScrollView(){
     return ListWheelScrollView(
       itemExtent: 150,
@@ -146,11 +140,10 @@ class _FossilBagState extends State<FossilBag> {
         });
       },
       // children of the list
-      children: fossili_catturati
-          !.map((e) => Container(
+      children: ammoniti_catturati!.map((e) => Container(
         decoration: BoxDecoration(
           // make selected item background color is differ from the rest
-          color: fossili_catturati!.indexOf(e) == _selectedItemIndex
+          color: ammoniti_catturati!.indexOf(e) == _selectedItemIndex
               ? marrone
               : white,
           shape: BoxShape.circle,),
@@ -162,55 +155,51 @@ class _FossilBagState extends State<FossilBag> {
           .toList(),
     );
   }
-  Future<bool> showExitDialog()async {
-    return await showDialog(barrierDismissible: false,context: context, builder: (context)=>
-        customAlertDialog(context,"Vuoi uscire dall'applicazione?"),);
+  Widget listaVuota(){
+    return Scaffold(
+      backgroundColor: grey300,
+      body: WillPopScope(onWillPop: showExitDialog,
+        child: Stack(
+          children: [
+            Center(child: Text('Il tuo zaino è vuoto',
+              style: TextStyle(color: black54,fontSize: 25,fontWeight: FontWeight.w600,fontFamily: 'PlayfairDisplay'),),),
+            Positioned(
+              top: MediaQuery.of(context).size.height*0.50,
+              left: MediaQuery.of(context).size.width*0.35,
+              child:  Image.asset('assets/image/zaino.png',height:100),
+            ),
+
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-   if(listaVuota){
-     return Scaffold(
-       backgroundColor: grey300,
-       body: WillPopScope(onWillPop: showExitDialog,
-         child: Stack(
-           children: [
-              Center(child: Text('Il tuo zaino è vuoto',
-               style: TextStyle(color: black54,fontSize: 25,fontWeight: FontWeight.w600,fontFamily: 'PlayfairDisplay'),),),
-             Positioned(
-               top: MediaQuery.of(context).size.height*0.50,
-               left: MediaQuery.of(context).size.width*0.35,
-               child:  Image.asset('assets/image/zaino.png',height:100),
-                 ),
 
-           ],
-         ),
-       ),
-     );
-   }
-   return Scaffold(
-     body: WillPopScope(onWillPop: showExitDialog,
-       child: Column(children: [
-         // display selected item
-         // implement the List Wheel Scroll View
-         Expanded(
-           child: Container(
-             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-             width: double.infinity,
-             color: grey300,
-             child: listWheelScrollView(),
-           ),
-         ),
-         Container(
-           width: double.infinity,
-           padding: const EdgeInsets.only(top:50,bottom: 50),
-           color: grey300,
-           alignment: Alignment.center,
-           child:  builtCard(),
-         ),
-       ]),
-     ),
-   );
-
+    return ammoniti_catturati.isEmpty? listaVuota():Scaffold(
+      body: WillPopScope(onWillPop: showExitDialog,
+        child: Column(children: [
+          // display selected item
+          // implement the List Wheel Scroll View
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              width: double.infinity,
+              color: grey300,
+              child: listWheelScrollView(),
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.only(top:50,bottom: 50),
+            color: grey300,
+            alignment: Alignment.center,
+            child:  builtCard(),
+          ),
+        ]),
+      ),
+    );
   }
 }

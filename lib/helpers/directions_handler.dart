@@ -1,13 +1,13 @@
-import 'package:ar/model/fossil.dart';
 import 'package:latlong2/latlong.dart';
 import '../main.dart';
+import '../model/ammonite.dart';
 import '../requests/mapbox_requests.dart';
 
 Future<Map> getDirectionsAPIResponse(LatLng currentLatLng, int index) async {
   final response = await getDrivingRouteUsingMapbox(
       currentLatLng,
-      LatLng(double.parse(fossili[index].latitudine.toString()),
-          double.parse(fossili[index].longitudine.toString())));
+      LatLng(double.parse(ammoniti[index].lat.toString()),
+          double.parse(ammoniti[index].long.toString())));
   Map geometry = response['routes'][0]['geometry'];
   num duration = response['routes'][0]['duration'];
   num distance = response['routes'][0]['distance'];
@@ -15,15 +15,15 @@ Future<Map> getDirectionsAPIResponse(LatLng currentLatLng, int index) async {
     "geometry": geometry,
     "duration": duration,
     "distance": distance,
-    "id": fossili[index].id,
+    "id": ammoniti[index].id,
   };
   return modifiedResponse;
 }
-Future<Map> getDirectionsAPIResponseFossil(LatLng currentLatLng,FossilModel fossile) async {
+Future<Map> getDirectionsAPIResponseFossil(LatLng currentLatLng,Ammonite fossile) async {
   final response = await getWalkingRouteUsingMapbox(
       currentLatLng,
-      LatLng(double.parse(fossile.latitudine.toString()),
-          double.parse(fossile.longitudine.toString())));
+      LatLng(double.parse(fossile.lat.toString()),
+          double.parse(fossile.long.toString())));
   Map geometry = response['routes'][0]['geometry'];
   num duration = response['routes'][0]['duration'];
   num distance = response['routes'][0]['distance'];
