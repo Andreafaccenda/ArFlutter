@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:ar/screens/fossili/ammonite_view_model.dart';
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
@@ -82,7 +83,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         width: 60,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Image.asset('assets/image/ammonite.gif'),),),
+                          child: Image(image:FirebaseImage('gs://serene-circlet-394113.appspot.com/${ammoniti[index].foto}')),
+                        ),),
                       const SizedBox(height: 2,),
                       Text(ammoniti[index].nome.toString(),style: TextStyle(color: black54,fontWeight: FontWeight.w300,fontFamily: 'PlayfairDisplay'),),],),
                 );

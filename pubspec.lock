@@ -34,6 +34,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
+  babylonjs_viewer:
+    dependency: "direct main"
+    description:
+      name: babylonjs_viewer
+      sha256: "87d31a171631aebb8a83f21318e123a8640e0cf2e885352365ec868db978ff8e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1"
   boolean_selector:
     dependency: transitive
     description:

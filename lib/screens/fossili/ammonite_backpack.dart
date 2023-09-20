@@ -1,4 +1,5 @@
 import 'package:ar/screens/fossili/ammonite_dettagli.dart';
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../main.dart';
@@ -60,8 +61,8 @@ class _AmmoniteBackpackState extends State<AmmoniteBackpack> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 10.0),
                 child: Container(decoration: BoxDecoration(border: Border.all(color: marrone!),shape: BoxShape.circle),
-                  child: const CircleAvatar(
-                    backgroundImage:  AssetImage('assets/image/ammonite.gif'),
+                  child:  CircleAvatar(
+                    backgroundImage: FirebaseImage('gs://serene-circlet-394113.appspot.com/${ammoniti_catturati[_selectedItemIndex].foto}'),
                     radius: 35,
                   ),
                 ),

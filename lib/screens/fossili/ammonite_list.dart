@@ -1,4 +1,6 @@
+import 'package:ar/screens/ar_flutter/ar_fossil.dart';
 import 'package:ar/screens/fossili/ammonite_view_model.dart';
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../main.dart';
@@ -8,7 +10,6 @@ import '../../widgets/costanti.dart';
 import '../../widgets/custom_dialog.dart';
 import 'ammonite_dettagli.dart';
 import 'ammonite_polyline.dart';
-import '../ar_flutter/ammonite_ar_guide.dart';
 import '../auth/auth_view_model.dart';
 
 late UserModel user;
@@ -71,6 +72,7 @@ class _AmmoniteListState extends State<AmmoniteList> {
               Get.to(() => DettagliAmmonite(model: lista[index]));
             },
             child: Container(
+              height: MediaQuery.of(context).size.height*0.14,
               margin: const EdgeInsetsDirectional.fromSTEB(0, 0, 10, 20),
               child: AspectRatio(
                 aspectRatio: 3/1,
@@ -85,8 +87,9 @@ class _AmmoniteListState extends State<AmmoniteList> {
                       AspectRatio(aspectRatio: 1/1,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(25),
-                          child: Image.asset('assets/image/ammonite.gif',
-                            fit: BoxFit.cover,),
+                          child: Image(
+                            image:FirebaseImage('gs://serene-circlet-394113.appspot.com/${lista[index].foto}',)
+                          ),
                         ),),
                       const SizedBox(width: 10 ,),
                       AspectRatio(aspectRatio: 4/3,
@@ -114,7 +117,7 @@ class _AmmoniteListState extends State<AmmoniteList> {
                                     ),),),
                                 const SizedBox(width: 15,),
                                 GestureDetector(onTap: () {
-                                  Get.to(() => ArGuide(model: lista[index],));
+                                  Get.to(() => ArFossil(model: lista[index],));
                                 },
                                   child: Container(padding: const EdgeInsets.all(5),
                                     decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: white,),

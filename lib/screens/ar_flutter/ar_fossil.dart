@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 import 'package:ar/widgets/progressBar.dart';
 import 'package:ar_flutter_plugin/managers/ar_location_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
@@ -7,6 +6,7 @@ import 'package:ar_flutter_plugin/managers/ar_object_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_anchor_manager.dart';
 import 'package:ar_flutter_plugin/models/ar_anchor.dart';
 import 'package:firebase_image/firebase_image.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:ar_flutter_plugin/ar_flutter_plugin.dart';
 import 'package:ar_flutter_plugin/datatypes/config_planedetection.dart';
@@ -26,6 +26,7 @@ import '../../model/user_model.dart';
 import '../../widgets/costanti.dart';
 import '../../widgets/custom_dialog.dart';
 import '../auth/auth_view_model.dart';
+import 'available_model.dart';
 
 class ArFossil extends StatefulWidget {
   Ammonite model;
@@ -53,16 +54,9 @@ class _ArFossilState extends State<ArFossil> {
   List<ARNode> nodes = [];
   List<ARAnchor> anchors = [];
   late  Position currentPosition;
+  bool visibilyImage = false;
   String lastUploadedAnchor = "";
-  bool _isMultipleStop = false;
-  double? _distanceRemaining, _durationRemaining;
-  MapBoxNavigationViewController? _controller;
-  bool _routeBuilt = false;
-  bool _isNavigating = false;
-  bool _inFreeDrive = false;
-  String? _instruction;
-  late MapBoxOptions _options;
-  late MapBoxOptions _navigationOption;
+  String url = "";
   late   StreamSubscription _getPositionSubscription;
   AvailableModel selectedModel = AvailableModel(
       "Duck",
@@ -72,6 +66,15 @@ class _ArFossilState extends State<ArFossil> {
   bool readyToDownload = true;
   bool modelChoiceActive = false;
   bool vicino = false;
+  String? _platformVersion;
+  String? _instruction;
+  bool _isMultipleStop = false;
+  double? _distanceRemaining, _durationRemaining;
+  MapBoxNavigationViewController? _controller;
+  bool _routeBuilt = false;
+  bool _isNavigating = false;
+  bool _inFreeDrive = false;
+  late MapBoxOptions _navigationOption;
 
 
   final LocationSettings locationSettings =  const LocationSettings(
@@ -85,6 +88,7 @@ class _ArFossilState extends State<ArFossil> {
       _initialized = value;
       _error = !value;
     }));
+    load_image();
     initialize();
     _getUser();
     _isFossilNearly();
@@ -99,12 +103,21 @@ class _ArFossilState extends State<ArFossil> {
     super.dispose();
 
   }
+  load_image()async {
+    Reference  ref = FirebaseStorage.instance.ref().child(widget.model.foto_locazione.toString());
+
+    //get image url from firebase storage
+    var urlImage = await ref.getDownloadURL();
+    setState(() {
+      url = urlImage;
+    });
+  }
   Future<void> initialize() async {
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
     if (!mounted) return;
-    _options =  MapBoxOptions(
+    _navigationOption =  MapBoxOptions(
       mode: MapBoxNavigationMode.drivingWithTraffic,
       simulateRoute: false,
       language: 'it',
@@ -118,10 +131,6 @@ class _ArFossilState extends State<ArFossil> {
       enableRefresh: false,
       alternatives: false,
     );
-    _navigationOption = MapBoxNavigation.instance.getDefaultOptions();
-    _navigationOption.simulateRoute = true;
-    //_navigationOption.initialLatitude = 36.1175275;
-    //_navigationOption.initialLongitude = -115.1839524;
     MapBoxNavigation.instance.registerRouteEventListener(_onEmbeddedRouteEvent);
     MapBoxNavigation.instance.setDefaultOptions(_navigationOption);
 
@@ -138,30 +147,7 @@ class _ArFossilState extends State<ArFossil> {
       }
     }
   }
-  _isFossilNearly(){
-    _getPositionSubscription  = Geolocator.getPositionStream(locationSettings: locationSettings)
-        .listen((Position? position) async {
-      setState(() async {
-        currentPosition=position!;
-        distanceInMeters = Geolocator.distanceBetween(position.latitude, position.longitude,double.parse(widget.model.lat.toString()), double.parse(widget.model.long.toString()));
-      });
-      if (distanceInMeters <= 5.00) {
-        setState(() {
-          vicino = true;
-          while(readyToDownload){
-            onDownloadButtonPressed();
-          }
-        });
-      }else{
-        setState(() {
-          vicino = false;
-        });
-      }
-    });
-  }
   Future<void> _onEmbeddedRouteEvent(e) async {
-    _distanceRemaining = await MapBoxNavigation.instance.getDistanceRemaining();
-    _durationRemaining = await MapBoxNavigation.instance.getDurationRemaining();
 
     switch (e.eventType) {
       case MapBoxEvent.progress_change:
@@ -203,6 +189,27 @@ class _ArFossilState extends State<ArFossil> {
         break;
     }
     setState(() {});
+  }
+  _isFossilNearly(){
+    _getPositionSubscription  = Geolocator.getPositionStream(locationSettings: locationSettings)
+        .listen((Position? position) async {
+      setState(() {
+        currentPosition=position!;
+        distanceInMeters = Geolocator.distanceBetween(position!.latitude, position.longitude,double.parse(widget.model.lat.toString()), double.parse(widget.model.long.toString()));
+      });
+         if (distanceInMeters <= 5.00) {
+        setState(() {
+          vicino = true;
+          while(readyToDownload){
+            onDownloadButtonPressed();
+          }
+        });
+      }else{
+        setState(() {
+          vicino = false;
+        });
+      }
+    });
   }
 
   @override
@@ -280,10 +287,13 @@ class _ArFossilState extends State<ArFossil> {
               children: [
                 Icon(Icons.directions_walk,color: vicino ? green: red,size: 15,),
                 const SizedBox(width: 2,),
-                Text('${distanceInMeters.toStringAsFixed(2)} m',style: TextStyle(fontFamily: 'PlayfairDisplay',color: vicino ? green: red,fontSize: 10,fontWeight: FontWeight.w700),),],),),),
+                Text('${distanceInMeters.toStringAsFixed(2)} m',style: TextStyle(fontFamily: 'PlayfairDisplay',color: vicino ? green: red,fontSize: 10,fontWeight: FontWeight.w700),),
+                const SizedBox(width: 10,),
+                Text('${widget.model.zona}',style: TextStyle(fontFamily: 'PlayfairDisplay',color: vicino ? green: red,fontSize: 10,fontWeight: FontWeight.w700))
+              ],),),),
         Positioned(
           top: MediaQuery.of(context).size.height*0.74,
-          left: MediaQuery.of(context).size.width*0.08,
+          left: MediaQuery.of(context).size.width*0.07,
           child: Row(mainAxisAlignment: MainAxisAlignment.center,
             children:  [
               Container(padding: const EdgeInsets.all(9), decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: grey300,),
@@ -306,15 +316,17 @@ class _ArFossilState extends State<ArFossil> {
                     ),),
               ),
               GestureDetector(onTap: () async {
+
+
                 var wayPoints = <WayPoint>[];
                 final partenza = WayPoint(name: 'partenza', latitude: currentPosition.latitude, longitude: currentPosition.longitude);
                 final destination = WayPoint(name: 'destination', latitude: double.parse(widget.model.lat.toString()), longitude:double.parse( widget.model.long.toString()));
                 wayPoints.add(partenza);
                 wayPoints.add(destination);
-                
+
 
                 await MapBoxNavigation.instance
-                    .startNavigation(wayPoints: wayPoints,options: _options);
+                    .startNavigation(wayPoints: wayPoints,options: _navigationOption);
               },
                 child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: grey300),
                   child:  Column(
@@ -337,6 +349,69 @@ class _ArFossilState extends State<ArFossil> {
                   ),),),
             ],
           ),
+        ),
+        Positioned(
+            top: MediaQuery.of(context).size.height*0.07,
+            left: MediaQuery.of(context).size.width*0.75,
+            child: GestureDetector(
+              onTap: (){
+                setState(() {
+                  visibilyImage=true;
+                });
+              },
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Image.asset('assets/image/image_location.png',height: 30,color: marrone,),
+                    const Text('Locazione \n reperto',style: TextStyle(color: white,fontFamily: 'PlayfairDisplay',letterSpacing: 2,fontSize: 10,fontWeight: FontWeight.w700),),
+                  ],
+                ),
+            ),
+
+            ),
+        Positioned(
+          top: MediaQuery.of(context).size.height*0.28,
+          left: MediaQuery.of(context).size.width*0.15,
+          child: Visibility(
+            visible: visibilyImage,
+            child: Container(
+              height: MediaQuery.of(context).size.height*0.30,
+              width: MediaQuery.of(context).size.width*0.73,
+              decoration: BoxDecoration(
+                color: marrone,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  children: [
+                     Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                         const Padding(
+                           padding: EdgeInsets.all(8.0),
+                           child: Text("Si trova esattamente qui",style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w300,
+                                color: white,
+                                letterSpacing: 2,
+                                fontFamily: 'PlayfairDisplay',)),
+                         ),
+                        SizedBox(width: 20,),
+                        IconButton(onPressed: (){setState(() {
+                          visibilyImage=false;
+                        });},
+                            icon: Icon(Icons.hide_image_outlined,color: black54,))
+                      ],
+                    ),
+                    const SizedBox(height:5,),
+                    SizedBox(height:150,child: Image.network(url)),
+                  ],
+                ),
+              )
+            )
+          ),
+
         ),
         Positioned(
             top: MediaQuery.of(context).size.height*0.83,
@@ -780,79 +855,4 @@ class FirebaseManager {
         .then((value) => listener(value))
         .catchError((error) => print("Failed to download objects: $error"));
   }
-}
-
-class AvailableModel {
-  String name;
-  String uri;
-  String image;
-  AvailableModel(this.name, this.uri, this.image);
-}
-
-class ModelSelectionWidget extends StatefulWidget {
-  final Function onTap;
-  final FirebaseManager firebaseManager;
-
-  ModelSelectionWidget({required this.onTap, required this.firebaseManager});
-
-  @override
-  _ModelSelectionWidgetState createState() => _ModelSelectionWidgetState();
-}
-
-class _ModelSelectionWidgetState extends State<ModelSelectionWidget> {
-  List<AvailableModel> models = [];
-
-  String? selected;
-
-  @override
-  void initState() {
-    super.initState();
-    widget.firebaseManager.downloadAvailableModels((snapshot) {
-      snapshot.docs.forEach((element) {
-        setState(() {
-          models.add(AvailableModel(element.get("name"), element.get("uri"),
-              element.get("image")));
-        });
-      });
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Text('Scegli un modello:',
-              style: TextStyle(color: Colors.white,fontWeight: FontWeight.w300,fontSize: 20)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.width * 0.40,
-              child: ListView.builder(
-                itemCount: models.length,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      widget.onTap(models[index]);
-                    },
-                    child:Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: CircleAvatar(backgroundColor: Colors.white,
-                        backgroundImage: FirebaseImage('gs://serene-circlet-394113.appspot.com/${models[index].image}'),
-                        radius: 60,
-                      ),
-                    ),
-
-                  );
-                },
-              ),
-            ),
-          )
-        ]);
-
-  }
-
-
 }

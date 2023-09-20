@@ -1,8 +1,8 @@
 
 class Ammonite {
-  String? id,nome,descrAmmonite,foto,roccia,descrRoccia,zona,lat,long,periodo,indirizzo;
+  String? id,nome,foto_locazione,descrAmmonite,foto,roccia,descrRoccia,zona,lat,long,periodo,indirizzo;
 
-  Ammonite({required this.id,required this.nome,required this.descrAmmonite,required this.foto,
+  Ammonite({required this.id,required this.nome,required foto_locazione,required this.descrAmmonite,required this.foto,
             required this.roccia,required this.descrRoccia,required this.zona,
             required this.lat,required this.long,required this.periodo,required this.indirizzo});
 
@@ -12,6 +12,7 @@ class Ammonite {
     }
     id = map['id'];
     nome = map['nome'];
+    foto_locazione = map['foto_locazione'];
     descrAmmonite = map['descrAmmonite'];
     foto = map['foto'];
     roccia = map['roccia'];
@@ -27,6 +28,7 @@ class Ammonite {
     return {
       'id' : id,
       'nome': nome,
+      'foto_locazione' : foto_locazione,
       'descrAmmonite': descrAmmonite,
       'foto': foto,
       'roccia': roccia,

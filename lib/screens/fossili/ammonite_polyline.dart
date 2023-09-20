@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:ar/screens/ar_flutter/ar_fossil.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -10,7 +11,6 @@ import '../../helpers/shared_prefs.dart';
 import '../../main.dart';
 import '../../model/ammonite.dart';
 import '../../widgets/costanti.dart';
-import '../ar_flutter/ammonite_ar_guide.dart';
 const MAPBOX_ACCESS_TOKEN='pk.eyJ1IjoiZmFjYzAwIiwiYSI6ImNsam9kc3kzbDFtcHMzZXBqdWQ2YjNzeDcifQ.koA0RgNUY0hLmiOT6W1yqg';
 
 class AmmonitePolyline extends StatefulWidget {
@@ -219,7 +219,7 @@ class _AmmonitePolylineState extends State<AmmonitePolyline> {
           FloatingActionButton(
               heroTag:'fab1',
               onPressed: (){
-                Get.to(() => ArGuide(model: widget.model));
+                Get.to(() => ArFossil(model: widget.model));
               },backgroundColor: marrone,
               child:  Image.asset('assets/image/icon_cattura.png',height: 30,)
           ),
