@@ -7,7 +7,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   geolocator_windows
   permission_handler_windows
   simple_animation_progress_bar
-  url_launcher_windows
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

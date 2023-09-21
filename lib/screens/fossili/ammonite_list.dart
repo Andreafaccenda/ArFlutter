@@ -72,7 +72,7 @@ class _AmmoniteListState extends State<AmmoniteList> {
               Get.to(() => DettagliAmmonite(model: lista[index]));
             },
             child: Container(
-              height: MediaQuery.of(context).size.height*0.14,
+              height: MediaQuery.of(context).size.height*0.15,
               margin: const EdgeInsetsDirectional.fromSTEB(0, 0, 10, 20),
               child: AspectRatio(
                 aspectRatio: 3/1,
