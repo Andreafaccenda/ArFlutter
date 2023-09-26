@@ -1,8 +1,10 @@
-import 'package:ar/screens/ar_flutter/ar_fossil.dart';
-import 'package:ar/screens/fossili/ammonite_view_model.dart';
+import 'package:ar/view/ar_flutter/ar_fossil.dart';
+import 'package:ar/helpers/ammonite_view_model.dart';
 import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
+import '../../helpers/shared_prefs.dart';
 import '../../main.dart';
 import '../../model/ammonite.dart';
 import '../../model/user_model.dart';
@@ -10,7 +12,7 @@ import '../../widgets/costanti.dart';
 import '../../widgets/custom_dialog.dart';
 import 'ammonite_dettagli.dart';
 import 'ammonite_polyline.dart';
-import '../auth/auth_view_model.dart';
+import '../../helpers/auth_view_model.dart';
 
 late UserModel user;
 class AmmoniteList extends StatefulWidget {
@@ -25,10 +27,12 @@ class _AmmoniteListState extends State<AmmoniteList> {
   final viewModel = AmmoniteViewModel();
   late List<Ammonite> lista;
   final viewModelAuth = AuthViewModel();
+  List<LatLng> points = [];
 
   @override
   void initState(){
     super.initState();
+    points.clear();
     lista = ammoniti;
   }
 
@@ -106,7 +110,13 @@ class _AmmoniteListState extends State<AmmoniteList> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 GestureDetector(onTap: () {
-                                  Get.to(() => AmmonitePolyline(model: lista[index]));
+                                      points.clear();
+                                      Map geometry = getGeometryFromSharedPrefs((index));
+                                      for(int i = 0;i< geometry['coordinates'].length;i++){
+                                        var coordinate = geometry['coordinates'][i];
+                                        points.add(LatLng(double.parse(coordinate[1].toString()), double.parse(coordinate[0].toString())));
+                                  }
+                                  Get.to(() => AmmonitePolyline(model: lista[index],points: points,));
                                 },
                                   child: Container(padding: const EdgeInsets.all(5),
                                     decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: white,),

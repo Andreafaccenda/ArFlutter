@@ -19,22 +19,6 @@ Future<Map> getDirectionsAPIResponse(LatLng currentLatLng, int index) async {
   };
   return modifiedResponse;
 }
-Future<Map> getDirectionsAPIResponseFossil(LatLng currentLatLng,Ammonite fossile) async {
-  final response = await getWalkingRouteUsingMapbox(
-      currentLatLng,
-      LatLng(double.parse(fossile.lat.toString()),
-          double.parse(fossile.long.toString())));
-  Map geometry = response['routes'][0]['geometry'];
-  num duration = response['routes'][0]['duration'];
-  num distance = response['routes'][0]['distance'];
-  Map modifiedResponse = {
-    "geometry": geometry,
-    "duration": duration,
-    "distance": distance,
-    "id": fossile.id,
-  };
-  return modifiedResponse;
-}
 
 void saveDirectionsAPIResponse(int index, String response) {
   sharedPreferences.setString('fossile--$index', response);

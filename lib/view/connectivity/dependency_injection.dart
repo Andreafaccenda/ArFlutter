@@ -1,4 +1,4 @@
-import 'package:ar/screens/connectivity/network_controller.dart';
+import 'package:ar/view/connectivity/network_controller.dart';
 import 'package:get/get.dart';
 
 class DependencyInjection {

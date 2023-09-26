@@ -1,4 +1,4 @@
-import 'package:ar/screens/fossili/ammonite_dettagli.dart';
+import 'package:ar/view/fossili/ammonite_dettagli.dart';
 import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,7 +7,7 @@ import '../../model/ammonite.dart';
 import '../../model/user_model.dart';
 import '../../widgets/costanti.dart';
 import '../../widgets/custom_dialog.dart';
-import '../auth/auth_view_model.dart';
+import '../../helpers/auth_view_model.dart';
 
 class AmmoniteBackpack extends StatefulWidget {
   const AmmoniteBackpack({Key? key}) : super(key: key);
@@ -51,7 +51,7 @@ class _AmmoniteBackpackState extends State<AmmoniteBackpack> {
         blurRadius: 10,
         offset: const Offset(0,3),
       )],),
-      width: 200,
+      width: MediaQuery.of(context).size.width*0.60,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: Column(

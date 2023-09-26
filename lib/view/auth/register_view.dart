@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../widgets/costanti.dart';
 import '../../widgets/validators.dart';
-import 'auth_view_model.dart';
+import '../../helpers/auth_view_model.dart';
 import 'login_view.dart';
 
 class RegisterView extends GetWidget<AuthViewModel> {

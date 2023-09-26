@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../model/user_model.dart';
-import '../../repository/auth_repository.dart';
-import '../../ui/hidden_drawer.dart';
-import 'login_view.dart';
+import '../model/user_model.dart';
+import '../repository/auth_repository.dart';
+import '../view/hidden_drawer.dart';
+import '../view/auth/login_view.dart';
 
 class AuthViewModel extends GetxController{
   final FirebaseAuth _auth = FirebaseAuth.instance;

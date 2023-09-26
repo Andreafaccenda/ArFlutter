@@ -25,7 +25,7 @@ import '../../model/ammonite.dart';
 import '../../model/user_model.dart';
 import '../../widgets/costanti.dart';
 import '../../widgets/custom_dialog.dart';
-import '../auth/auth_view_model.dart';
+import '../../helpers/auth_view_model.dart';
 import 'available_model.dart';
 
 class ArFossil extends StatefulWidget {
@@ -59,8 +59,8 @@ class _ArFossilState extends State<ArFossil> {
   String url = "";
   late   StreamSubscription _getPositionSubscription;
   AvailableModel selectedModel = AvailableModel(
-      "Duck",
-      "https://github.com/KhronosGroup/glTF-Sample-Models/raw/master/2.0/Duck/glTF-Binary/Duck.glb",
+      'Calliphylloceras',
+      "https://github.com/Andreafaccenda/ArFlutter/blob/master/Calliphylloceras.glb?raw=true",
       "");
   bool readyToUpload = false;
   bool readyToDownload = true;
@@ -467,7 +467,7 @@ class _ArFossilState extends State<ArFossil> {
       showFeaturePoints: false,
       showPlanes: true,
       customPlaneTexturePath: "assets/image/triangle.png",
-      showWorldOrigin: true,
+      showWorldOrigin: false,
       showAnimatedGuide: false,
     );
     this.arObjectManager!.onInitialize();

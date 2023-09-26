@@ -1,4 +1,4 @@
-import 'package:ar/screens/auth/register_view.dart';
+import 'package:ar/view/auth/register_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,7 +6,7 @@ import '../../widgets/costanti.dart';
 import '../../widgets/custom_dialog.dart';
 import '../../widgets/square_tile.dart';
 import '../../widgets/validators.dart';
-import 'auth_view_model.dart';
+import '../../helpers/auth_view_model.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});

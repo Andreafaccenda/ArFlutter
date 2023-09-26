@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:ar/screens/fossili/ammonite_view_model.dart';
+import 'package:ar/helpers/ammonite_view_model.dart';
 import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -163,7 +163,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                     )),
                               );
                             },
-                              child: Image.asset('assets/icon/icon_fossil.png',scale: 0.4),);
+                              child: Image.asset('assets/icon/icon_fossil.png',scale: 0.4),
+                                  );
                           }),
                         ],
                       ),

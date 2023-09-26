@@ -1,6 +1,4 @@
 
-import 'ammonite.dart';
-
 class UserModel {
   String? userId, nome, email, password;
   List<dynamic>? lista_fossili;

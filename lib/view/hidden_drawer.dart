@@ -1,12 +1,11 @@
 import 'dart:io';
-import 'package:ar/screens/add_ammonite_to_firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:hidden_drawer_menu/hidden_drawer_menu.dart';
 import '../model/user_model.dart';
-import '../screens/auth/auth_view_model.dart';
-import '../screens/fossili/home.dart';
-import '../screens/fossili/ammonite_list.dart';
-import '../screens/fossili/ammonite_backpack.dart';
+import '../helpers/auth_view_model.dart';
+import 'fossili/home.dart';
+import 'fossili/ammonite_list.dart';
+import 'fossili/ammonite_backpack.dart';
 import '../widgets/costanti.dart';
 
 class HiddenDrawer extends StatefulWidget {
@@ -73,15 +72,6 @@ class _HiddenDrawerState extends State<HiddenDrawer> {
           colorLineSelected: Colors.black54,
         ),
         const Home(),
-      ),
-      ScreenHiddenDrawer(
-        ItemHiddenMenu(
-          name: 'FIREBASE',
-          baseStyle: defaultTextStyle,
-          selectedStyle: defaultTextStyle,
-          colorLineSelected: Colors.black54,
-        ),
-        const AmmoniteFirebase(),
       ),
     ];
   }

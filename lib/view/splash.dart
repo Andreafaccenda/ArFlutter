@@ -8,8 +8,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import '../helpers/directions_handler.dart';
 import '../main.dart';
-import '../screens/auth/auth_view_model.dart';
-import '../screens/auth/login_view.dart';
+import '../helpers/auth_view_model.dart';
+import 'auth/login_view.dart';
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
 

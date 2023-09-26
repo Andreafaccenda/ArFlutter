@@ -1,7 +1,7 @@
 import 'package:ar/model/ammonite.dart';
-import 'package:ar/screens/fossili/ammonite_view_model.dart';
-import 'package:ar/screens/connectivity/dependency_injection.dart';
-import 'package:ar/ui/splash.dart';
+import 'package:ar/helpers/ammonite_view_model.dart';
+import 'package:ar/view/connectivity/dependency_injection.dart';
+import 'package:ar/view/splash.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -19,7 +19,7 @@ void main() async {
   await Firebase.initializeApp();
   sharedPreferences = await SharedPreferences.getInstance();
   await dotenv.load(fileName: "assets/config/.env");
-  ammoniti = await viewmodel.ammonite;
+  ammoniti = viewmodel.ammonite;
   DependencyInjection.init();
   runApp(const MyApp());
 }

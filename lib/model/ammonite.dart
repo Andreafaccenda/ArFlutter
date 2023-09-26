@@ -1,4 +1,5 @@
 
+
 class Ammonite {
   String? id,nome,foto_locazione,descrAmmonite,foto,roccia,descrRoccia,zona,lat,long,periodo,indirizzo;
 

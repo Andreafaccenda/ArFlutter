@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:ar/screens/ar_flutter/ar_fossil.dart';
+import 'package:ar/view/ar_flutter/ar_fossil.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -15,7 +15,8 @@ const MAPBOX_ACCESS_TOKEN='pk.eyJ1IjoiZmFjYzAwIiwiYSI6ImNsam9kc3kzbDFtcHMzZXBqdW
 
 class AmmonitePolyline extends StatefulWidget {
   Ammonite model;
-  AmmonitePolyline({super.key, required this.model});
+  List<LatLng> points;
+  AmmonitePolyline({super.key, required this.model,required this.points});
 
   @override
   State<AmmonitePolyline> createState() => _AmmonitePolylineState();
@@ -33,7 +34,6 @@ class _AmmonitePolylineState extends State<AmmonitePolyline> {
   int pageIndex = 0;
   bool accessed = false;
   late List<Widget> carouselItems;
-  List<LatLng> points = [];
 
   final LocationSettings locationSettings = const LocationSettings(
     accuracy: LocationAccuracy.high,
@@ -43,24 +43,8 @@ class _AmmonitePolylineState extends State<AmmonitePolyline> {
   @override
   void initState() {
     super.initState();
-    Geolocator.getPositionStream(locationSettings: locationSettings)
-        .listen((Position? position) async {
-          setState(() {
-            currentPosition=position!;
-          });
-          points.clear();
-      points.add(LatLng(double.parse(position!.latitude.toString()), double.parse(position.longitude.toString())));
-      points.add(LatLng(double.parse(widget.model.lat.toString()), double.parse(widget.model.long.toString())));
-    });
     // Calculate the distance and time from data in SharedPreferences
-    for (int index = 0; index < ammoniti.length; index++) {
-      String id = getIdFromSharedPrefs(index);
-      if (widget.model.id == id) {
-        distance = getDistanceFromSharedPrefs(index) / 1000;
-        duration = getDurationFromSharedPrefs(index) / 60;
-      }
-    }
-
+    calculateRoute();
     _followOnLocationUpdate = FollowOnLocationUpdate.always;
     _followCurrentLocationStreamController = StreamController<double?>();
   }
@@ -69,6 +53,15 @@ class _AmmonitePolylineState extends State<AmmonitePolyline> {
   void dispose() {
     _followCurrentLocationStreamController.close();
     super.dispose();
+  }
+  calculateRoute(){
+    for (int index = 0; index < ammoniti.length; index++) {
+      String id = getIdFromSharedPrefs(index);
+      if (widget.model.id == id) {
+        distance = getDistanceFromSharedPrefs(index) / 1000;
+        duration = getDurationFromSharedPrefs(index) / 60;
+        }
+      }
   }
 
 
@@ -175,7 +168,7 @@ class _AmmonitePolylineState extends State<AmmonitePolyline> {
         ),
         PolylineLayer(
           polylines: [
-            Polyline(points: points,color: Colors.black54, strokeWidth: 2),
+            Polyline(points: widget.points,color: Colors.green, strokeWidth: 2),
           ],
         ),
         CurrentLocationLayer( // disable animation
@@ -198,7 +191,7 @@ class _AmmonitePolylineState extends State<AmmonitePolyline> {
               child: flutterMap(),
             ),
             Positioned(
-                top: 20,left: 50,right: 50,child: carouselCard()),
+                top: 20,left: 40,right: 40,child: carouselCard()),
 
           ],
         ),
